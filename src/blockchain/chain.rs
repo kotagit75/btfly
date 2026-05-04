@@ -83,8 +83,9 @@ impl Chain {
         }
     }
 
-    pub fn add_block(&self, block: Block, generated_now: bool) -> (Self, bool) {
-        if generated_now
+    pub fn add_block(&self, block: Block, i_generated: bool, generated_now: bool) -> (Self, bool) {
+        if !i_generated
+            && generated_now
             && !is_valid_beacon(
                 &block.beacon,
                 &self.get_beacon_history(),
@@ -93,6 +94,7 @@ impl Chain {
         {
             return (self.clone(), false);
         }
+
         if is_valid_new_block(&block, &self.get_latest_block()) {
             (
                 Self {

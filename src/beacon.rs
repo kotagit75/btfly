@@ -12,19 +12,12 @@ pub struct Beacon {
 
 const TEMPERATURE_SCRIPT_PATH: &str = "beacon/temperature.sh";
 const TARGET_GEOJSON: &str = include_str!("beacon/target.geojson");
-
-fn get_temperature(lon: f64, lat: f64) -> Option<f32> {
-    let output = run_command_and_get_output(
-        Command::new(TEMPERATURE_SCRIPT_PATH).args([lat.to_string(), lon.to_string()]),
-    );
-    output.map(|str| str.parse::<f32>().ok()).flatten()
-}
-
-fn choose_locations(lastest_block_hash: &Hashed) -> Vec<geojson::Position> {
+use std::sync::LazyLock;
+static TARGET_LOCATIONS: LazyLock<Vec<geojson::Position>> = LazyLock::new(|| {
     let Ok(collection) = TARGET_GEOJSON.parse::<FeatureCollection>() else {
         return Vec::new();
     };
-    let locations: Vec<geojson::Position> = collection
+    collection
         .features
         .iter()
         .map(|feature| feature.geometry.clone())
@@ -34,12 +27,22 @@ fn choose_locations(lastest_block_hash: &Hashed) -> Vec<geojson::Position> {
             _ => None,
         })
         .flatten()
-        .collect();
-    let len = locations.len();
+        .collect()
+});
+
+fn get_temperature(lon: f64, lat: f64) -> Option<f32> {
+    let output = run_command_and_get_output(
+        Command::new(TEMPERATURE_SCRIPT_PATH).args([lat.to_string(), lon.to_string()]),
+    );
+    output.map(|str| str.parse::<f32>().ok()).flatten()
+}
+
+fn choose_locations(lastest_block_hash: &Hashed) -> Vec<geojson::Position> {
+    let len = TARGET_LOCATIONS.len();
     lastest_block_hash
         .iter()
         .map(|i| (*i as usize) % len)
-        .map(|i| locations.get(i))
+        .map(|i| TARGET_LOCATIONS.get(i))
         .flatten()
         .cloned()
         .collect()

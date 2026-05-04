@@ -78,7 +78,7 @@ pub fn update(event: Event, state: State) -> (State, Effect) {
         }
         Event::CompletedMineBlock(new_block) => {
             info!("completed mining block");
-            let (chain, changed) = state.chain.add_block(new_block.clone(), true);
+            let (chain, changed) = state.chain.add_block(new_block.clone(), true, true);
             let new_state = State {
                 chain,
                 transactions: Vec::new(),
@@ -112,7 +112,9 @@ pub fn update(event: Event, state: State) -> (State, Effect) {
             if received_lastest_block.index > held_lastest_block.index {
                 if received_lastest_block.previous_hash == held_lastest_block.hash {
                     let (new_chain, changed) =
-                        state.chain.add_block(received_lastest_block.clone(), true);
+                        state
+                            .chain
+                            .add_block(received_lastest_block.clone(), false, true);
                     return (
                         State {
                             chain: new_chain,
