@@ -88,18 +88,7 @@ Dawn gets temperature data from multiple regions. The regions are as follows:
         "type": "Point",
         "coordinates": [130.401689, 33.590183, 0]
       },
-      "properties": {
-        "styleUrl": "#msn_icon?color=fbc02d&id=2000&scale=4",
-        "fill-opacity": 0.25098039215686274,
-        "fill": "#ffffff",
-        "stroke-opacity": 1,
-        "stroke": "#fbc02d",
-        "stroke-width": 4,
-        "label-scale": 0.8,
-        "icon-scale": 1.5,
-        "icon": "https://earth.google.com/earth/document/icon?color=fbc02d&id=2000&scale=4"
-      },
-      "id": "08A4CA3ABB3E9772BB90"
+      "properties": {}
     },
     {
       "type": "Feature",
@@ -107,20 +96,7 @@ Dawn gets temperature data from multiple regions. The regions are as follows:
         "type": "Point",
         "coordinates": [140.729061, 41.768697, 0]
       },
-      "properties": {
-        "styleUrl": "#msn_icon?color=fbc02d&id=2000&scale=40",
-        "fill-opacity": 0.25098039215686274,
-        "fill": "#ffffff",
-        "stroke-opacity": 1,
-        "stroke": "#fbc02d",
-        "stroke-width": 4,
-        "label-scale": 0.8,
-        "icon-scale": 1.5,
-        "icon-offset": [64, 128],
-        "icon-offset-units": ["pixels", "insetPixels"],
-        "icon": "https://earth.google.com/earth/document/icon?color=fbc02d&id=2000&scale=4"
-      },
-      "id": "0530A314AA3E9773BBCD"
+      "properties": {}
     },
     {
       "type": "Feature",
@@ -128,38 +104,12 @@ Dawn gets temperature data from multiple regions. The regions are as follows:
         "type": "Point",
         "coordinates": [139.63438781464149, 35.45023396820895, 0]
       },
-      "properties": {
-        "styleUrl": "#msn_icon?color=fbc02d&id=2000&scale=40",
-        "fill-opacity": 0.25098039215686274,
-        "fill": "#ffffff",
-        "stroke-opacity": 1,
-        "stroke": "#fbc02d",
-        "stroke-width": 4,
-        "label-scale": 0.8,
-        "icon-scale": 1.5,
-        "icon-offset": [64, 128],
-        "icon-offset-units": ["pixels", "insetPixels"],
-        "icon": "https://earth.google.com/earth/document/icon?color=fbc02d&id=2000&scale=4"
-      },
-      "id": "071C1FDBF13E9774F7C7"
+      "properties": {}
     },
     {
       "type": "Feature",
       "geometry": { "type": "Point", "coordinates": [135.76815, 35.011564, 0] },
-      "properties": {
-        "styleUrl": "#msn_icon?color=fbc02d&id=2000&scale=40",
-        "fill-opacity": 0.25098039215686274,
-        "fill": "#ffffff",
-        "stroke-opacity": 1,
-        "stroke": "#fbc02d",
-        "stroke-width": 4,
-        "label-scale": 0.8,
-        "icon-scale": 1.5,
-        "icon-offset": [64, 128],
-        "icon-offset-units": ["pixels", "insetPixels"],
-        "icon": "https://earth.google.com/earth/document/icon?color=fbc02d&id=2000&scale=4"
-      },
-      "id": "0BC66EC3F63E9775D992"
+      "properties": {}
     },
     {
       "type": "Feature",
@@ -167,20 +117,7 @@ Dawn gets temperature data from multiple regions. The regions are as follows:
         "type": "Point",
         "coordinates": [140.869417, 38.268194, 0]
       },
-      "properties": {
-        "styleUrl": "#msn_icon?color=fbc02d&id=2000&scale=40",
-        "fill-opacity": 0.25098039215686274,
-        "fill": "#ffffff",
-        "stroke-opacity": 1,
-        "stroke": "#fbc02d",
-        "stroke-width": 4,
-        "label-scale": 0.8,
-        "icon-scale": 1.5,
-        "icon-offset": [64, 128],
-        "icon-offset-units": ["pixels", "insetPixels"],
-        "icon": "https://earth.google.com/earth/document/icon?color=fbc02d&id=2000&scale=4"
-      },
-      "id": "0A0F43D3643E97839B19"
+      "properties": {}
     },
     {
       "type": "Feature",
@@ -188,38 +125,12 @@ Dawn gets temperature data from multiple regions. The regions are as follows:
         "type": "Point",
         "coordinates": [135.195631, 34.690081, 0]
       },
-      "properties": {
-        "styleUrl": "#msn_icon?color=fbc02d&id=2000&scale=40",
-        "fill-opacity": 0.25098039215686274,
-        "fill": "#ffffff",
-        "stroke-opacity": 1,
-        "stroke": "#fbc02d",
-        "stroke-width": 4,
-        "label-scale": 0.8,
-        "icon-scale": 1.5,
-        "icon-offset": [64, 128],
-        "icon-offset-units": ["pixels", "insetPixels"],
-        "icon": "https://earth.google.com/earth/document/icon?color=fbc02d&id=2000&scale=4"
-      },
-      "id": "0F489967AA3E97841D2B"
+      "properties": {}
     },
     {
       "type": "Feature",
       "geometry": { "type": "Point", "coordinates": [136.906558, 35.18145, 0] },
-      "properties": {
-        "styleUrl": "#msn_icon?color=fbc02d&id=2000&scale=40",
-        "fill-opacity": 0.25098039215686274,
-        "fill": "#ffffff",
-        "stroke-opacity": 1,
-        "stroke": "#fbc02d",
-        "stroke-width": 4,
-        "label-scale": 0.8,
-        "icon-scale": 1.5,
-        "icon-offset": [64, 128],
-        "icon-offset-units": ["pixels", "insetPixels"],
-        "icon": "https://earth.google.com/earth/document/icon?color=fbc02d&id=2000&scale=4"
-      },
-      "id": "0EDF57EBE63E978A0E80"
+      "properties": {}
     },
     {
       "type": "Feature",
@@ -227,20 +138,7 @@ Dawn gets temperature data from multiple regions. The regions are as follows:
         "type": "Point",
         "coordinates": [132.455306, 34.385289, 0]
       },
-      "properties": {
-        "styleUrl": "#msn_icon?color=fbc02d&id=2000&scale=40",
-        "fill-opacity": 0.25098039215686274,
-        "fill": "#ffffff",
-        "stroke-opacity": 1,
-        "stroke": "#fbc02d",
-        "stroke-width": 4,
-        "label-scale": 0.8,
-        "icon-scale": 1.5,
-        "icon-offset": [64, 128],
-        "icon-offset-units": ["pixels", "insetPixels"],
-        "icon": "https://earth.google.com/earth/document/icon?color=fbc02d&id=2000&scale=4"
-      },
-      "id": "092C7EF2BA3E978AA3E6"
+      "properties": {}
     },
     {
       "type": "Feature",
@@ -248,19 +146,7 @@ Dawn gets temperature data from multiple regions. The regions are as follows:
         "type": "Point",
         "coordinates": [140.421492, 40.61632, 0]
       },
-      "properties": {
-        "styleUrl": "#msn_icon?color=fbc02d&id=2000&scale=400",
-        "fill-opacity": 0.25098039215686274,
-        "fill": "#ffffff",
-        "stroke-opacity": 1,
-        "stroke": "#fbc02d",
-        "stroke-width": 4,
-        "label-scale": 0.8,
-        "icon-scale": 1.5,
-        "icon-offset": [64, 128],
-        "icon-offset-units": ["pixels", "insetPixels"],
-        "icon": "https://earth.google.com/earth/document/icon?color=fbc02d&id=2000&scale=4"
-      }
+      "properties": {}
     },
     {
       "type": "Feature",
@@ -268,19 +154,7 @@ Dawn gets temperature data from multiple regions. The regions are as follows:
         "type": "Point",
         "coordinates": [130.5571231843784, 31.596708556139077, 0]
       },
-      "properties": {
-        "styleUrl": "#msn_icon?color=fbc02d&id=2000&scale=400",
-        "fill-opacity": 0.25098039215686274,
-        "fill": "#ffffff",
-        "stroke-opacity": 1,
-        "stroke": "#fbc02d",
-        "stroke-width": 4,
-        "label-scale": 0.8,
-        "icon-scale": 1.5,
-        "icon-offset": [64, 128],
-        "icon-offset-units": ["pixels", "insetPixels"],
-        "icon": "https://earth.google.com/earth/document/icon?color=fbc02d&id=2000&scale=4"
-      }
+      "properties": {}
     }
   ]
 }
