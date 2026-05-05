@@ -6,16 +6,21 @@ use std::{
 use axum::{
     Router,
     extract::{self, Path},
+    http::HeaderValue,
     response,
     routing::{get, post},
 };
 use serde::{Deserialize, Serialize};
 use tokio::sync::{mpsc, watch};
+use tower_http::cors::CorsLayer;
 
 use crate::{blockchain::address::Address, p2p::Peer, state::State, update::Event, util::key::PK};
 
 const API_PORT: u16 = 8080;
 pub async fn init_api(event_tx: mpsc::Sender<Event>, state_rx: watch::Receiver<State>) {
+    let cors =
+        CorsLayer::new().allow_origin(["http://localhost:3000".parse::<HeaderValue>().unwrap()]);
+
     let app = Router::new()
         .route("/state", get(handle_get_state))
         .route("/address", get(handle_get_address))
@@ -24,7 +29,8 @@ pub async fn init_api(event_tx: mpsc::Sender<Event>, state_rx: watch::Receiver<S
         .route("/tx", post(handle_post_transaction))
         .route("/mine", post(handle_post_mine))
         .route("/peer", post(handle_post_peer))
-        .with_state((event_tx, state_rx));
+        .with_state((event_tx, state_rx))
+        .layer(cors);
     let addr = SocketAddr::new(std::net::IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)), API_PORT);
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
     info!("API server is running on http://{}/", addr);
