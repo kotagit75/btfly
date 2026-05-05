@@ -37,6 +37,13 @@ impl State {
         {
             return (self.clone(), false);
         }
+        if self
+            .transactions
+            .iter()
+            .any(|t| t.tx_in == transaction.tx_in)
+        {
+            return (self.clone(), false);
+        }
         (
             Self {
                 transactions: self
