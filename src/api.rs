@@ -17,9 +17,11 @@ use tower_http::cors::CorsLayer;
 use crate::{blockchain::address::Address, p2p::Peer, state::State, update::Event, util::key::PK};
 
 const API_PORT: u16 = 8080;
+const CORS_ALLOW_PORT: u16 = 3000;
 pub async fn init_api(event_tx: mpsc::Sender<Event>, state_rx: watch::Receiver<State>) {
-    let cors =
-        CorsLayer::new().allow_origin(["http://localhost:3000".parse::<HeaderValue>().unwrap()]);
+    let cors = CorsLayer::new().allow_origin([format!("http://localhost:{CORS_ALLOW_PORT}")
+        .parse::<HeaderValue>()
+        .unwrap()]);
 
     let app = Router::new()
         .route("/state", get(handle_get_state))
