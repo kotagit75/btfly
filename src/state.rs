@@ -27,7 +27,7 @@ impl State {
         })
     }
 
-    pub fn add_to_transaction(&self, transaction: &Transaction) -> (Self, bool) {
+    pub fn add_transaction(&self, transaction: &Transaction) -> (Self, bool) {
         if !(transaction.is_valid()
             && transaction.tx_in.iter().all(|tx_in| {
                 self.chain

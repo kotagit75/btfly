@@ -33,7 +33,6 @@ pub async fn init_api(event_tx: mpsc::Sender<Event>, state_rx: watch::Receiver<S
         .route("/balance", get(handle_get_balance))
         .route("/balance/{address}", get(handle_get_balance_with_address))
         .route("/tx", post(handle_post_transaction))
-        .route("/mine", post(handle_post_mine))
         .route("/peer", post(handle_post_peer))
         .with_state((event_tx, state_rx))
         .layer(cors);
@@ -91,12 +90,6 @@ async fn handle_post_transaction(
             .await
             .is_ok(),
     )
-}
-
-async fn handle_post_mine(
-    extract::State((event_tx, _)): extract::State<(mpsc::Sender<Event>, watch::Receiver<State>)>,
-) -> response::Json<bool> {
-    response::Json(event_tx.send(Event::MineBlock).await.is_ok())
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize)]

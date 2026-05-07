@@ -3,7 +3,7 @@ use std::vec;
 use crate::{
     beacon::get_beacon,
     blockchain::{
-        address::Address,
+        address::{Address, is_valid_address},
         block::Block,
         chain::Chain,
         transaction::{Transaction, coinbase_transaction},
@@ -45,13 +45,20 @@ pub fn update(event: Event, state: State) -> (State, Effect) {
             );
         }
         Event::AddTransaction(recipient, amount) => {
+            if !is_valid_address(&recipient) {
+                info!("invalid recipient address: {}", recipient.der);
+                return (state, Effect::None);
+            }
             if let Ok(Some(transaction)) = state.chain.generate_transaction(
                 &state.address,
                 &recipient,
                 amount,
                 &state.secret_key,
             ) {
-                let (state, changed) = state.add_to_transaction(&transaction);
+                let (state, changed) = state.add_transaction(&transaction);
+                if changed {
+                    info!("added transaction: {:?}", transaction);
+                }
                 return (state, {
                     if changed {
                         Effect::BroadcastResponseTransactions(vec![transaction.clone()])
@@ -59,7 +66,7 @@ pub fn update(event: Event, state: State) -> (State, Effect) {
                         Effect::None
                     }
                 });
-            };
+            }
         }
         Event::MineBlock => {
             let coinbase = coinbase_transaction(&state.address);
@@ -79,11 +86,7 @@ pub fn update(event: Event, state: State) -> (State, Effect) {
         Event::CompletedMineBlock(new_block) => {
             info!("completed mining block");
             let (chain, changed) = state.chain.add_block(new_block.clone(), true, true);
-            let new_state = State {
-                chain,
-                transactions: Vec::new(),
-                ..state
-            };
+            let new_state = State { chain, ..state };
             return (new_state, {
                 if changed {
                     Effect::BroadcastResponseBlocks(vec![new_block])
@@ -154,7 +157,7 @@ pub fn update(event: Event, state: State) -> (State, Effect) {
                 transactions
                     .iter()
                     .fold((state, false), |(state, changed), transaction| {
-                        let (state, changed_) = state.add_to_transaction(transaction);
+                        let (state, changed_) = state.add_transaction(transaction);
                         (state, changed || changed_)
                     });
             return (state.clone(), {
@@ -180,14 +183,16 @@ pub async fn run_effect(state: State, event_tx: mpsc::Sender<Event>, effect: Eff
             ) else {
                 return;
             };
-            let Ok(event) = state
-                .chain
-                .generate_next_block(&state.secret_key, &state.address, beacon, transactions)
-                .map(|block| Event::CompletedMineBlock(block))
-            else {
+            let Ok(block) = state.chain.generate_next_block(
+                &state.secret_key,
+                &state.address,
+                beacon,
+                transactions,
+            ) else {
                 return;
             };
-            let _ = event_tx.send(event).await;
+            let _ = event_tx.send(Event::CompletedMineBlock(block)).await;
+            let _ = event_tx.send(Event::MineBlock).await;
         }
         Effect::BroadcastResponseBlocks(blocks) => {
             broadcast(&state.peers, &P2PMessage::ResponseBlockChain(blocks)).await;

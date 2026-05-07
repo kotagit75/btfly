@@ -56,9 +56,6 @@ curl localhost:8080/balance
 # send transaction
 curl -X POST -H "Content-Type: application/json" -d "{'recipient':'{address}', 'amount': {amount}}" localhost:8080/tx
 
-# mine a block
-curl -X POST localhost:8080/mine
-
 # add peer
 curl -X POST -H "Content-Type: application/json" -d '{"ip":"{IP Addr}"}' localhost:8080/peer
 ```
