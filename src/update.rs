@@ -54,6 +54,7 @@ pub fn update(event: Event, state: State) -> (State, Effect) {
                 &recipient,
                 amount,
                 &state.secret_key,
+                &state.transactions,
             ) {
                 let (state, changed) = state.add_transaction(&transaction);
                 if changed {

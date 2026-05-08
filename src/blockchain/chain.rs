@@ -132,8 +132,17 @@ impl Chain {
         recipient: &Address,
         amount: u64,
         secret_key: &SK,
+        used_transactions: &[Transaction],
     ) -> Result<Option<Transaction>, ErrorStack> {
-        let (unspent_transactions, _) = self.get_unspent_transactions();
+        let (mut unspent_transactions, _) = self.get_unspent_transactions();
+
+        let used_unspent_ids: Vec<u64> = used_transactions
+            .iter()
+            .flat_map(|tx| tx.tx_in.iter().map(|i| i.unspent_id))
+            .collect();
+
+        unspent_transactions.retain(|tx| !used_unspent_ids.iter().any(|t| *t == tx.id));
+
         let my_unspent_transactions: Vec<UnspentTransaction> = unspent_transactions
             .iter()
             .filter(|tx| &tx.address == sender)
