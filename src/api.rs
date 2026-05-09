@@ -34,7 +34,6 @@ pub async fn init_api(event_tx: mpsc::Sender<Event>, state_rx: watch::Receiver<S
         .allow_headers(Any);
 
     let app = Router::new()
-        .route("/state", get(handle_get_state))
         .route("/address", get(handle_get_address))
         .route("/chain", get(handle_get_chain))
         .route("/balance", get(handle_get_balance))
@@ -48,12 +47,6 @@ pub async fn init_api(event_tx: mpsc::Sender<Event>, state_rx: watch::Receiver<S
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
     info!("API server is running on http://{}/", addr);
     axum::serve(listener, app).await.unwrap();
-}
-
-async fn handle_get_state(
-    extract::State((_, state_rx)): extract::State<(mpsc::Sender<Event>, watch::Receiver<State>)>,
-) -> response::Json<State> {
-    response::Json(state_rx.borrow().clone())
 }
 
 async fn handle_get_address(
