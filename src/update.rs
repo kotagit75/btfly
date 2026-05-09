@@ -178,10 +178,7 @@ pub async fn run_effect(state: State, event_tx: mpsc::Sender<Event>, effect: Eff
         Effect::None => {}
         Effect::MineBlock(transactions) => {
             info!("start mining block");
-            let Some(beacon) = get_beacon(
-                &state.chain.get_beacon_history(),
-                &state.chain.get_latest_block().hash,
-            ) else {
+            let Some(beacon) = get_beacon(&state.chain.get_latest_block().hash) else {
                 return;
             };
             let Ok(block) = state.chain.generate_next_block(
