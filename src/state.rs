@@ -37,11 +37,18 @@ impl State {
         {
             return (self.clone(), false);
         }
-        if self
+
+        let tx_in_ids = transaction
+            .tx_in
+            .iter()
+            .map(|tx_in| tx_in.unspent_id)
+            .collect::<Vec<_>>();
+        let state_tx_in_ids = self
             .transactions
             .iter()
-            .any(|t| t.tx_in == transaction.tx_in)
-        {
+            .flat_map(|t| t.tx_in.iter().map(|tx_in| tx_in.unspent_id))
+            .collect::<Vec<_>>();
+        if tx_in_ids.iter().any(|id| !state_tx_in_ids.contains(id)) {
             return (self.clone(), false);
         }
         (
