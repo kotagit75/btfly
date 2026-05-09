@@ -1,7 +1,7 @@
 use geojson::{FeatureCollection, GeometryValue};
-use std::process::Command;
-
 use serde::{Deserialize, Serialize};
+use std::process::Command;
+use std::sync::LazyLock;
 
 use crate::util::{command::run_command_and_get_output, hash::Hashed};
 
@@ -12,7 +12,6 @@ pub struct Beacon {
 
 const TEMPERATURE_SCRIPT_PATH: &str = "beacon/temperature";
 const TARGET_GEOJSON: &str = include_str!("beacon/target.geojson");
-use std::sync::LazyLock;
 static TARGET_LOCATIONS: LazyLock<Vec<geojson::Position>> = LazyLock::new(|| {
     let Ok(collection) = TARGET_GEOJSON.parse::<FeatureCollection>() else {
         return Vec::new();
