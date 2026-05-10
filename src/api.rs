@@ -17,17 +17,16 @@ use tower_http::cors::{Any, CorsLayer};
 
 use crate::{
     blockchain::{address::Address, chain::Chain},
+    config::CONFIG,
     p2p::Peer,
     state::State,
     update::Event,
     util::key::PK,
 };
 
-const API_PORT: u16 = 8080;
-const CORS_ALLOW_PORT: u16 = 3000;
 pub async fn init_api(event_tx: mpsc::Sender<Event>, state_rx: watch::Receiver<State>) {
     let cors = CorsLayer::new()
-        .allow_origin([format!("http://localhost:{}", CORS_ALLOW_PORT)
+        .allow_origin([format!("http://localhost:{}", CONFIG.cors_allow_port)
             .parse::<HeaderValue>()
             .unwrap()])
         .allow_methods([Method::GET, Method::POST])
@@ -43,7 +42,10 @@ pub async fn init_api(event_tx: mpsc::Sender<Event>, state_rx: watch::Receiver<S
         .route("/peer", post(handle_post_peer))
         .with_state((event_tx, state_rx))
         .layer(cors);
-    let addr = SocketAddr::new(std::net::IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)), API_PORT);
+    let addr = SocketAddr::new(
+        std::net::IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)),
+        CONFIG.api_port,
+    );
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
     info!("API server is running on http://{}/", addr);
     axum::serve(listener, app).await.unwrap();
@@ -88,7 +90,6 @@ struct TransactionPayload {
     recipient: String,
     amount: u64,
 }
-
 async fn handle_post_transaction(
     extract::State((event_tx, _)): extract::State<(mpsc::Sender<Event>, watch::Receiver<State>)>,
     extract::Json(payload): extract::Json<TransactionPayload>,

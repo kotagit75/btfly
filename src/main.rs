@@ -12,6 +12,7 @@ use crate::update::{run_effect, update};
 pub mod api;
 pub mod beacon;
 pub mod blockchain;
+pub mod config;
 pub mod node;
 pub mod p2p;
 pub mod state;
