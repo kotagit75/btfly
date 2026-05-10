@@ -65,6 +65,10 @@ curl -X POST -H "Content-Type: application/json" -d '{"ip":"{IP Addr}"}' localho
 ```
 
 ## :globe_with_meridians: Environment variable
+| Name | Description | Default |
+| :--- | :--- | :--- |
+| `API_PORT` | API server port number | `8080` |
+| `CORS_ALLOW_PORT` | CORS allow port number | `3000` |
 ## 📍 Locations which is collected temperature data
 Dawn gets temperature data from multiple locations. The locations are as follows:
 - Hakodate `140.7290611111111, 41.76869722222222`
