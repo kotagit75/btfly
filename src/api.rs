@@ -27,7 +27,7 @@ const API_PORT: u16 = 8080;
 const CORS_ALLOW_PORT: u16 = 3000;
 pub async fn init_api(event_tx: mpsc::Sender<Event>, state_rx: watch::Receiver<State>) {
     let cors = CorsLayer::new()
-        .allow_origin([format!("http://localhost:{CORS_ALLOW_PORT}")
+        .allow_origin([format!("http://localhost:{}", CORS_ALLOW_PORT)
             .parse::<HeaderValue>()
             .unwrap()])
         .allow_methods([Method::GET, Method::POST])
