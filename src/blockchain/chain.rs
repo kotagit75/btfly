@@ -130,6 +130,10 @@ impl Chain {
         secret_key: &SK,
         used_transactions: &[Transaction],
     ) -> Result<Option<Transaction>, ErrorStack> {
+        if self.get_balance(sender) < amount {
+            return Ok(None);
+        }
+
         let (mut unspent_transactions, _) = self.get_unspent_transactions();
 
         let used_unspent_ids: Vec<u64> = used_transactions
@@ -138,13 +142,12 @@ impl Chain {
             .collect();
 
         unspent_transactions.retain(|tx| !used_unspent_ids.iter().any(|t| *t == tx.id));
-
-        let my_unspent_transactions: Vec<UnspentTransaction> = unspent_transactions
+        let sender_unspent_transactions: Vec<UnspentTransaction> = unspent_transactions
             .iter()
             .filter(|tx| &tx.address == sender)
             .cloned()
             .collect();
-        let use_unspent = flex_unspent_transactions(amount, my_unspent_transactions);
+        let use_unspent = flex_unspent_transactions(amount, sender_unspent_transactions);
         if use_unspent.is_empty() {
             return Ok(None);
         }
@@ -188,4 +191,154 @@ pub fn is_valid_new_block(block: &Block, previous_block: &Block) -> bool {
         && block.previous_hash == previous_block.hash
         && block.calculate_hash() == block.hash
         && block.is_valid()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::beacon::Beacon;
+    use crate::blockchain::block::{Block, genesis_block};
+    use crate::blockchain::transaction::{TransactionIn, coinbase_transaction};
+    use crate::util::key::{SK, generate_pk_and_sk};
+
+    fn keypair() -> (Address, SK) {
+        let (pk, sk) = generate_pk_and_sk(512).unwrap();
+        (pk, sk)
+    }
+
+    fn dummy_block(prev: &Block, txs: Vec<Transaction>, beacon: f32) -> Block {
+        Block {
+            index: prev.index + 1,
+            timestamp: prev.timestamp + 1,
+            transactions: txs,
+            beacon: Beacon { value: beacon },
+            vdf_solution: vec![],
+            previous_hash: prev.hash,
+            issuer: prev.issuer.clone(),
+            signature: vec![],
+            hash: [prev.index as u8 + 1; 32],
+        }
+    }
+
+    fn chain_with_coinbase(miner: &Address) -> Chain {
+        let g = genesis_block();
+        let b1 = dummy_block(&g, vec![coinbase_transaction(miner)], 1.0);
+        Chain {
+            blocks: vec![g, b1],
+        }
+    }
+
+    #[test]
+    fn new_has_only_genesis() {
+        let c = Chain::new();
+        assert_eq!(c.blocks.len(), 1);
+        assert_eq!(c.get_latest_block(), genesis_block());
+    }
+
+    #[test]
+    fn get_unspent_and_find_unspent_work() {
+        let (miner, _) = keypair();
+        let c = chain_with_coinbase(&miner);
+        let (utxos, next_id) = c.get_unspent_transactions();
+        assert_eq!(utxos.len(), 1);
+        assert_eq!(utxos[0].amount, 50);
+        assert_eq!(next_id, 2);
+        assert!(c.find_unspent_transaction(1).is_some());
+        assert!(c.find_unspent_transaction(999).is_none());
+    }
+
+    #[test]
+    fn generate_transaction_returns_none_when_insufficient() {
+        let (sender, sk) = keypair();
+        let (recipient, _) = keypair();
+        let c = chain_with_coinbase(&sender);
+        let tx = c
+            .generate_transaction(&sender, &recipient, 999, &sk, &[])
+            .unwrap();
+        assert!(tx.is_none());
+    }
+
+    #[test]
+    fn generate_transaction_uses_utxo_and_returns_change() {
+        let (sender, sk) = keypair();
+        let (recipient, _) = keypair();
+        let c = chain_with_coinbase(&sender);
+
+        let tx = c
+            .generate_transaction(&sender, &recipient, 30, &sk, &[])
+            .unwrap()
+            .unwrap();
+
+        assert_eq!(tx.tx_in, vec![TransactionIn { unspent_id: 1 }]);
+        assert_eq!(tx.out.iter().map(|o| o.amount).sum::<u64>(), 50);
+    }
+
+    #[test]
+    fn generate_transaction_respects_used_transactions_filter() {
+        let (sender, sk) = keypair();
+        let (recipient, _) = keypair();
+        let c = chain_with_coinbase(&sender);
+
+        let used = c
+            .generate_transaction(&sender, &recipient, 30, &sk, &[])
+            .unwrap()
+            .unwrap();
+
+        let next = c
+            .generate_transaction(&sender, &recipient, 10, &sk, &[used])
+            .unwrap();
+
+        assert!(next.is_none());
+    }
+
+    #[test]
+    fn get_balance_sums_unspent_by_address() {
+        let (a, _) = keypair();
+        let (b, _) = keypair();
+
+        let g = genesis_block();
+        let b1 = dummy_block(&g, vec![coinbase_transaction(&a)], 1.0);
+        let b2 = dummy_block(&b1, vec![coinbase_transaction(&b)], 2.0);
+        let c = Chain {
+            blocks: vec![g, b1, b2],
+        };
+
+        assert_eq!(c.get_balance(&a), 50);
+        assert_eq!(c.get_balance(&b), 50);
+    }
+
+    #[test]
+    fn get_beacon_history_collects_all_blocks() {
+        let (miner, _) = keypair();
+        let g = genesis_block();
+        let b1 = dummy_block(&g, vec![coinbase_transaction(&miner)], 1.25);
+        let b2 = dummy_block(&b1, vec![coinbase_transaction(&miner)], 2.5);
+        let c = Chain {
+            blocks: vec![g, b1, b2],
+        };
+
+        let h = c.get_beacon_history();
+        assert_eq!(h.len(), 3);
+        assert!((h[1].value - 1.25).abs() < f32::EPSILON);
+        assert!((h[2].value - 2.5).abs() < f32::EPSILON);
+    }
+
+    #[test]
+    fn add_block_rejects_invalid_block() {
+        let c = Chain::new();
+        let bad = dummy_block(&c.get_latest_block(), vec![], 1.0);
+        let (next, changed) = c.add_block(bad, false, false);
+        assert!(!changed);
+        assert_eq!(next, c);
+    }
+
+    #[test]
+    fn replace_rejects_invalid_longer_chain() {
+        let base = Chain::new();
+        let g = genesis_block();
+        let longer_but_invalid = Chain {
+            blocks: vec![g.clone(), dummy_block(&g, vec![], 1.0)],
+        };
+        assert_eq!(base.replace(longer_but_invalid), base);
+    }
 }
