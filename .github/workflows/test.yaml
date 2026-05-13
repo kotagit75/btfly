@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: test_rust
+        working-directory: dawn
     steps:
       - uses: actions/checkout@v4
       - id: toolchain
@@ -26,6 +26,6 @@ jobs:
       - id: cache
         uses: Swatinem/rust-cache@v2
         with:
-          workspaces: test_rust
+          workspaces: dawn
       - run: cargo test --all-features
       - run: cargo fmt --all --check
