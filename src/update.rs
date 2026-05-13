@@ -203,3 +203,169 @@ pub async fn run_effect(state: State, event_tx: mpsc::Sender<Event>, effect: Eff
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::{
+        beacon::Beacon,
+        blockchain::{
+            block::{Block, genesis_block},
+            chain::Chain,
+            transaction::{coinbase_transaction, is_valid_coinbase_transaction},
+        },
+        state::State,
+        util::key::{SK, generate_pk_and_sk},
+    };
+    use std::net::Ipv4Addr;
+
+    fn keypair() -> (Address, SK) {
+        let (pk, sk) = generate_pk_and_sk(512).unwrap();
+        (pk, sk)
+    }
+
+    fn dummy_block_with_coinbase(prev: &Block, miner: &Address) -> Block {
+        Block {
+            index: prev.index + 1,
+            timestamp: prev.timestamp + 1,
+            transactions: vec![coinbase_transaction(miner)],
+            beacon: Beacon { value: 1.0 },
+            vdf_solution: vec![],
+            previous_hash: prev.hash,
+            issuer: miner.clone(),
+            signature: vec![],
+            hash: [prev.index as u8 + 1; 32],
+        }
+    }
+
+    fn funded_state() -> State {
+        let (_, sk) = keypair();
+        let mut state = State::new(sk).unwrap();
+        let g = genesis_block();
+        let b1 = dummy_block_with_coinbase(&g, &state.address);
+        state.chain = Chain {
+            blocks: vec![g, b1],
+        };
+        state
+    }
+
+    #[test]
+    fn add_peer_appends_peer() {
+        let state = funded_state();
+        let peer = Peer::new(Ipv4Addr::new(127, 0, 0, 1));
+
+        let (next, effect) = update(Event::AddPeer(peer.clone()), state);
+
+        assert_eq!(effect, Effect::None);
+        assert!(next.peers.contains(&peer));
+    }
+
+    #[test]
+    fn add_transaction_rejects_invalid_recipient() {
+        let state = funded_state();
+        let invalid = Address {
+            der: "this-is-not-hex".to_string(),
+        };
+
+        let (next, effect) = update(Event::AddTransaction(invalid, 10), state.clone());
+
+        assert_eq!(effect, Effect::None);
+        assert_eq!(next, state);
+    }
+
+    #[test]
+    fn add_transaction_accepts_and_broadcasts_when_valid() {
+        let state = funded_state();
+        let (recipient, _) = keypair();
+
+        let (next, effect) = update(Event::AddTransaction(recipient, 10), state);
+
+        assert_eq!(next.transactions.len(), 1);
+        match effect {
+            Effect::BroadcastResponseTransactions(txs) => assert_eq!(txs.len(), 1),
+            _ => panic!("expected BroadcastResponseTransactions"),
+        }
+    }
+
+    #[test]
+    fn mine_block_clears_pending_and_creates_coinbase_first() {
+        let mut state = funded_state();
+        let (recipient, _) = keypair();
+        let tx = state
+            .chain
+            .generate_transaction(&state.address, &recipient, 10, &state.secret_key, &[])
+            .unwrap()
+            .unwrap();
+        state.transactions.push(tx);
+
+        let (next, effect) = update(Event::MineBlock, state);
+
+        assert!(next.transactions.is_empty());
+        match effect {
+            Effect::MineBlock(txs) => {
+                assert_eq!(txs.len(), 2);
+                assert!(is_valid_coinbase_transaction(&txs[0]));
+            }
+            _ => panic!("expected MineBlock effect"),
+        }
+    }
+
+    #[test]
+    fn query_transactions_returns_current_pool() {
+        let mut state = funded_state();
+        let (recipient, _) = keypair();
+        let tx = state
+            .chain
+            .generate_transaction(&state.address, &recipient, 10, &state.secret_key, &[])
+            .unwrap()
+            .unwrap();
+        state.transactions.push(tx.clone());
+
+        let (next, effect) = update(
+            Event::P2PMessage(P2PMessage::QueryTransactions),
+            state.clone(),
+        );
+
+        assert_eq!(next, state);
+        assert_eq!(effect, Effect::BroadcastResponseTransactions(vec![tx]));
+    }
+
+    #[test]
+    fn response_transactions_adds_new_and_rebroadcasts() {
+        let state = funded_state();
+        let (recipient, _) = keypair();
+        let tx = state
+            .chain
+            .generate_transaction(&state.address, &recipient, 10, &state.secret_key, &[])
+            .unwrap()
+            .unwrap();
+
+        let (next, effect) = update(
+            Event::P2PMessage(P2PMessage::ResponseTransactions(vec![tx.clone()])),
+            state,
+        );
+
+        assert_eq!(next.transactions.len(), 1);
+        assert_eq!(effect, Effect::BroadcastResponseTransactions(vec![tx]));
+    }
+
+    #[test]
+    fn response_transactions_duplicate_is_ignored() {
+        let mut state = funded_state();
+        let (recipient, _) = keypair();
+        let tx = state
+            .chain
+            .generate_transaction(&state.address, &recipient, 10, &state.secret_key, &[])
+            .unwrap()
+            .unwrap();
+        state.transactions.push(tx.clone());
+
+        let (next, effect) = update(
+            Event::P2PMessage(P2PMessage::ResponseTransactions(vec![tx])),
+            state.clone(),
+        );
+
+        assert_eq!(next, state);
+        assert_eq!(effect, Effect::None);
+    }
+}
