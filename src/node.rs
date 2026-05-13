@@ -1,4 +1,4 @@
-use std::io::Error;
+use std::io;
 
 use openssl::error::ErrorStack;
 
@@ -7,16 +7,35 @@ use crate::util::key::{SK, generate_pk_and_sk};
 const NODE_KEY_BITS: u32 = 512;
 
 const NODE_DIR_PATH: &str = "node";
+const NODE_GITIGNORE_PATH: &str = "node/.gitignore";
 const NODE_KEY_PATH: &str = "node/key.der";
+
+fn create_node_dir() -> Result<(), ()> {
+    info!("creating node directory");
+    std::fs::create_dir(NODE_DIR_PATH)
+        .inspect_err(|e| error!("failed to create the node directory: {}", e))
+        .map_err(|_| ())?;
+
+    Ok(())
+}
+
+fn create_gitignore() -> Result<(), ()> {
+    info!("creating gitignore");
+    std::fs::write(NODE_GITIGNORE_PATH, format!("{}\n", NODE_KEY_PATH))
+        .inspect_err(|e| error!("failed to create the gitignore file: {}", e))
+        .map_err(|_| ())?;
+
+    Ok(())
+}
 
 pub fn load_or_generate_key() -> Result<SK, ()> {
     if std::fs::metadata(NODE_DIR_PATH).is_err() {
-        info!("creating node directory");
-        std::fs::create_dir(NODE_DIR_PATH).map_err(|_| {
-            error!("failed to create node directory");
-            ()
-        })?;
+        create_node_dir()?;
     }
+    if std::fs::metadata(NODE_GITIGNORE_PATH).is_err() {
+        create_gitignore()?;
+    }
+
     if std::fs::metadata(NODE_KEY_PATH).is_ok() {
         info!("reading node key");
         read_key().map_err(|_| {
@@ -42,10 +61,10 @@ pub fn generate_key() -> Result<SK, ErrorStack> {
     generate_pk_and_sk(NODE_KEY_BITS).map(|(_, sk)| sk)
 }
 
-pub fn read_key() -> Result<SK, Error> {
+pub fn read_key() -> Result<SK, io::Error> {
     std::fs::read_to_string(NODE_KEY_PATH).map(|der| SK { der: der })
 }
 
-pub fn save_key(sk: &SK) -> Result<(), Error> {
+pub fn save_key(sk: &SK) -> Result<(), io::Error> {
     std::fs::write(NODE_KEY_PATH, &sk.der)
 }
