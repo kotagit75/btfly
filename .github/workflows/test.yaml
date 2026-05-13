@@ -14,9 +14,6 @@ jobs:
   test:
     name: cargo test and fmt
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: dawn
     steps:
       - uses: actions/checkout@v4
       - id: toolchain
