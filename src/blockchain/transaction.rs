@@ -227,3 +227,186 @@ pub fn flex_unspent_transactions(
         )
         .1
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::util::key::generate_pk_and_sk;
+
+    fn keypair() -> (Address, SK) {
+        let (pk, sk) = generate_pk_and_sk(512).unwrap();
+        (pk, sk)
+    }
+
+    #[test]
+    fn new_with_signature_creates_verifiable_tx() {
+        let (sender, sk) = keypair();
+        let (recipient, _) = keypair();
+
+        let tx = Transaction::new_with_creating_signature(
+            &sender,
+            vec![TransactionOut {
+                address: recipient,
+                amount: 10,
+            }],
+            vec![TransactionIn { unspent_id: 1 }],
+            &sk,
+        )
+        .unwrap();
+
+        assert!(tx.verify_signature());
+        assert!(tx.is_valid());
+    }
+
+    #[test]
+    fn verify_signature_fails_after_tamper() {
+        let (sender, sk) = keypair();
+        let (recipient, _) = keypair();
+
+        let mut tx = Transaction::new_with_creating_signature(
+            &sender,
+            vec![TransactionOut {
+                address: recipient,
+                amount: 10,
+            }],
+            vec![TransactionIn { unspent_id: 1 }],
+            &sk,
+        )
+        .unwrap();
+
+        tx.out[0].amount = 11;
+        assert!(!tx.verify_signature());
+        assert!(!tx.is_valid());
+    }
+
+    #[test]
+    fn total_amount_sums_outputs() {
+        let (sender, sk) = keypair();
+        let (r1, _) = keypair();
+        let (r2, _) = keypair();
+
+        let tx = Transaction::new_with_creating_signature(
+            &sender,
+            vec![
+                TransactionOut {
+                    address: r1,
+                    amount: 7,
+                },
+                TransactionOut {
+                    address: r2,
+                    amount: 13,
+                },
+            ],
+            vec![TransactionIn { unspent_id: 1 }],
+            &sk,
+        )
+        .unwrap();
+
+        assert_eq!(tx.total_amount(), 20);
+    }
+
+    #[test]
+    fn get_unspent_transactions_adds_outputs_and_consumes_inputs() {
+        let (sender, sk) = keypair();
+        let (recipient, _) = keypair();
+
+        let tx = Transaction::new_with_creating_signature(
+            &sender,
+            vec![
+                TransactionOut {
+                    address: recipient,
+                    amount: 10,
+                },
+                TransactionOut {
+                    address: sender.clone(),
+                    amount: 5,
+                },
+            ],
+            vec![TransactionIn { unspent_id: 1 }],
+            &sk,
+        )
+        .unwrap();
+
+        let prev = vec![
+            UnspentTransaction {
+                id: 1,
+                address: sender.clone(),
+                amount: 20,
+            },
+            UnspentTransaction {
+                id: 2,
+                address: sender,
+                amount: 30,
+            },
+        ];
+
+        let (next, new_id) = tx.get_unspent_transactions((prev, 3));
+
+        assert_eq!(new_id, 5);
+        assert!(next.iter().all(|u| u.id != 1));
+        assert!(next.iter().any(|u| u.id == 2));
+        assert!(next.iter().any(|u| u.id == 3));
+        assert!(next.iter().any(|u| u.id == 4));
+    }
+
+    #[test]
+    fn coinbase_transaction_is_valid() {
+        let (miner, _) = keypair();
+        let tx = coinbase_transaction(&miner);
+        assert!(is_valid_coinbase_transaction(&tx));
+    }
+
+    #[test]
+    fn coinbase_transaction_invalid_when_amount_changed() {
+        let (miner, _) = keypair();
+        let mut tx = coinbase_transaction(&miner);
+        tx.out[0].amount = 999;
+        assert!(!is_valid_coinbase_transaction(&tx));
+    }
+
+    #[test]
+    fn get_transaction_out_returns_recipient_and_change() {
+        let (sender, _) = keypair();
+        let (recipient, _) = keypair();
+
+        let out = get_transaction_out(&sender, &recipient, 30, 100);
+
+        assert_eq!(out.len(), 2);
+        assert_eq!(out[0].address, recipient);
+        assert_eq!(out[0].amount, 30);
+        assert_eq!(out[1].address, sender);
+        assert_eq!(out[1].amount, 70);
+    }
+
+    #[test]
+    fn flex_unspent_transactions_picks_minimum_prefix_to_reach_target() {
+        let (addr, _) = keypair();
+
+        let utxos = vec![
+            UnspentTransaction {
+                id: 1,
+                address: addr.clone(),
+                amount: 3,
+            },
+            UnspentTransaction {
+                id: 2,
+                address: addr.clone(),
+                amount: 4,
+            },
+            UnspentTransaction {
+                id: 3,
+                address: addr,
+                amount: 10,
+            },
+        ];
+
+        let selected = flex_unspent_transactions(7, utxos.clone());
+        assert_eq!(
+            selected.iter().map(|u| u.id).collect::<Vec<_>>(),
+            vec![1, 2]
+        );
+
+        let selected_insufficient = flex_unspent_transactions(100, utxos);
+        assert_eq!(selected_insufficient.len(), 3);
+    }
+}
