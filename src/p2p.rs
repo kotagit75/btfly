@@ -57,11 +57,18 @@ impl Peer {
         )
     }
     pub async fn write(&self, message: &P2PMessage) {
-        let _ = reqwest::Client::new()
+        let result = reqwest::Client::new()
             .post(&self.get_url())
             .json(message)
             .send()
             .await;
+        if result.is_err() {
+            error!(
+                "failed to send message to peer({}): {:?}",
+                self.ip,
+                result.err()
+            );
+        }
     }
 }
 
