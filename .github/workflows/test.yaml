@@ -1,0 +1,31 @@
+name: Rust CI
+
+on:
+  push:
+    branches: ["master"]
+  pull_request:
+    branches: ["master"]
+
+env:
+  CARGO_TERM_COLOR: always
+  RUSTFLAGS: -Dwarnings
+
+jobs:
+  test:
+    name: cargo test and fmt
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: test_rust
+    steps:
+      - uses: actions/checkout@v4
+      - id: toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+      - id: cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: test_rust
+      - run: cargo test --all-features
+      - run: cargo fmt --all --check
