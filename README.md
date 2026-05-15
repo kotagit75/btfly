@@ -20,33 +20,19 @@ Dawn is a decentralized currency that relies on the randomness of the weather an
 Weather is a source of information where, regardless of who observes it, relatively consistent readings are obtained at the same time; however, it is impossible to predict its changes with absolute accuracy. By incorporating this characteristic of weather into the consensus mechanism of a decentralized system, we can create a currency that does not require proof-of-work.
 
 Here, data that is difficult to predict is referred to as a "beacon." Dawn uses a hash chain composed of linked blocks. In addition to transactions, each block contains the beacon and the results of VDF calculations. Because the value of the beacon is difficult to predict, it is challenging to generate future blocks. Furthermore, the hash chain is employed to prevent the generation of blocks using past beacon values.
-## :rocket: Get started
-### Installation
+## :rocket: Quick Start
 ```bash
-# Clone the repository (or Download ZIP)
 git clone https://github.com/kotagit75/Dawn.git
-
-# Navigate to the project directory
 cd Dawn
-
-# build
 cargo build --release
-```
-### Create a script to retrieve the temperature
-```bash
 mkdir beacon
+cp example/beacon/open-meteo-api beacon/temperature
+chmod +x beacon/temperature
+./target/release/dawn
 ```
-Create a shell script named `beacon/temperature`.This script retrieves the latitude and longitude and returns the temperature at that location as `stdout`.It doesn't matter how you implement it. Here is an example. Note that this API does not actually exist.
-```bash
-#!/bin/bash
 
-temperature=$(curl "https://example.com/api?latitude=$1&longitude=$2")
-echo -n $temperature
-exit 0
-```
-Even without using an API, it is possible to conduct observations by placing sensors on-site, for example.
+[Detailed Installation Instructions](docs/installation.md)
 
-[Learn more examples](docs/temperature_script_example.md)
 ### Usage
 ```bash
 # run
