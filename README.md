@@ -73,16 +73,43 @@ curl -X POST -H "Content-Type: application/json" -d '{"ip":"{IP Addr}"}' localho
 | `CORS_ALLOW_PORT` | CORS allow port number | `3000` |
 ## 📍 Locations which is collected temperature data
 Dawn gets temperature data from multiple locations. The locations are as follows:
-- Hakodate `140.7290611111111, 41.76869722222222`
-- Hirosaki `140.421492, 40.61632`
-- Sendai `140.8694166666667, 38.26819444444445`
-- Yokohama `139.63438781464149, 35.45023396820895`
-- Nagoya `136.9065583333334, 35.18145`
-- Kyoto `135.76815, 35.01156388888889`
-- Kobe `135.1956305555556, 34.69008055555555`
-- Hiroshima `132.4553055555556, 34.38528888888889`
-- Fukuoka `130.4016888888889, 33.59018333333334`
-- Kagoshima `130.5571231843784, 31.596708556139077`
+
+|Name|Lat|Lon|
+|:-:|:-:|:-:|
+|Wakkanai Airport|45.3995654|141.7974528|
+|Asahikawa Airport|43.67147493|142.446865|
+|Kushiro Airport|43.04503509|144.1962358|
+|Obihiro Airport|42.73121032|143.2177867|
+|Sapporo Okadama Airport|43.11577495|141.3802179|
+|New Chitose Airport|42.77899571|141.6860269|
+|Hakodate Airport|41.7754762|140.8161369|
+|Aomori Airport|40.73545867|140.6902087|
+|Akita Airport|39.61432074|140.2176736|
+|Hanamaki Airport|39.42148821|141.1384845|
+|Sendai Airport|38.13993289|140.9170924|
+|Yamagata Airport|38.41209636|140.3703334|
+|Fukushima Airport|37.2284081|140.4282886|
+|Niigata Airport|37.95505405|139.1114496|
+|Matsumoto Airport|36.16462046|137.9264258|
+|Narita International Airport|35.77073692|140.3848188|
+|Tokyo International Airport|35.548171|139.7791314|
+|Shizuoka Airport|34.79653615|138.1853326|
+|Chubu Centrair International Airport|34.85720324|136.8101604|
+|Osaka Itami Airport|34.78606811|135.4381271|
+|Kansai International Airport|34.43197865|135.2367959|
+|Kobe Airport|34.63507139|135.2267252|
+|Takamatsu Airport|34.21484194|134.0146539|
+|Kochi Airport|33.5476357|133.6739953|
+|Hiroshima Airport|34.43731367|132.9207516|
+|Matsuyama Airport|33.8277126|132.7003022|
+|Yamaguchi Ube Airport|33.93127097|131.2786026|
+|Fukuoka Airport|33.58561376|130.4500511|
+|Nagasaki Airport|32.91489785|129.9170527|
+|Oita Airport|33.47958263|131.7362115|
+|Kumamoto Airport|32.83497974|130.8588813|
+|Kagoshima Airport|31.80072839|130.7202485|
+|Naha Airport|26.19990739|127.6467932|
+
 
 [View geojson](src/beacon/target.geojson)
 
