@@ -240,7 +240,7 @@ mod tests {
 
     fn funded_state() -> State {
         let (_, sk) = keypair();
-        let mut state = State::new(sk).unwrap();
+        let mut state = State::new(sk, Chain::new()).unwrap();
         let g = genesis_block();
         let b1 = dummy_block_with_coinbase(&g, &state.address);
         state.chain = Chain {

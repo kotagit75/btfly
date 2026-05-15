@@ -17,11 +17,11 @@ pub struct State {
 }
 
 impl State {
-    pub fn new(secret_key: SK) -> Result<Self, ErrorStack> {
+    pub fn new(secret_key: SK, chain: Chain) -> Result<Self, ErrorStack> {
         secret_key.to_pk().map(|address| Self {
             secret_key,
             address,
-            chain: Chain::new(),
+            chain,
             transactions: Vec::new(),
             peers: Vec::new(),
         })

@@ -7,7 +7,10 @@ extern crate regex;
 use log::Level;
 use tokio::sync::{mpsc, watch};
 
-use crate::update::{run_effect, update};
+use crate::{
+    node::save_chain,
+    update::{run_effect, update},
+};
 
 pub mod api;
 pub mod beacon;
@@ -28,8 +31,13 @@ async fn main() {
         error!("failed to load node key");
         return;
     };
+    info!("loading chain");
+    let Ok(chain) = node::load_or_generate_chain() else {
+        error!("failed to load chain");
+        return;
+    };
     info!("initializing state");
-    let Ok(mut state) = state::State::new(sk) else {
+    let Ok(mut state) = state::State::new(sk, chain) else {
         error!("failed to initialize state");
         return;
     };
@@ -48,10 +56,17 @@ async fn main() {
 
     let _ = event_tx.send(update::Event::MineBlock).await;
 
+    let previous_chain = state.chain.clone();
+
     while let Some((new_state, effect)) = event_rx.recv().await.map(|event| update(event, state)) {
         state = new_state.clone();
         let _ = state_tx.send(state.clone());
         let event_tx_clone = event_tx.clone();
+
+        if state.chain != previous_chain {
+            let _ = save_chain(&state.chain).inspect_err(|e| error!("failed to save chain: {}", e));
+        }
+
         tokio::spawn(async move {
             run_effect(new_state, event_tx_clone, effect).await;
         });
