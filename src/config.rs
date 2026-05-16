@@ -17,14 +17,18 @@ pub struct Config {
 const INTERNAL_CONFIG_JSON: &str = include_str!("config.json");
 
 pub static CONFIG: LazyLock<Config> = LazyLock::new(|| {
-    let api_port = match env::var("API_PORT") {
-        Ok(val) => val.parse().unwrap(),
-        Err(_) => 8080,
+    let api_port = if let Ok(Ok(val)) = env::var("API_PORT").map(|port| port.parse::<u16>()) {
+        val
+    } else {
+        8080
     };
-    let cors_allow_port = match env::var("CORS_ALLOW_PORT") {
-        Ok(val) => val.parse().unwrap(),
-        Err(_) => 3000,
-    };
+    let cors_allow_port =
+        if let Ok(Ok(val)) = env::var("CORS_ALLOW_PORT").map(|port| port.parse::<u16>()) {
+            val
+        } else {
+            3000
+        };
+
     let internal_config: InternalConfig = match serde_json::from_str(INTERNAL_CONFIG_JSON) {
         Ok(config) => config,
         Err(_) => InternalConfig {
