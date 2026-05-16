@@ -58,7 +58,7 @@ curl -X POST -H "Content-Type: application/json" -d '{"ip":"[IP Addr]"}' localho
 | `API_PORT` | API server port number | `8080` |
 | `CORS_ALLOW_PORT` | CORS allow port number | `3000` |
 ## 📍 Locations which is collected temperature data
-Dawn gets temperature data from multiple locations. The locations are as follows:
+Dawn gets temperature data from multiple locations. They are currently placed in Japan. The locations are as follows:
 
 |Name|Latitude|Longitude|
 |:-:|:-:|:-:|
