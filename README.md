@@ -1,9 +1,9 @@
 <div align="center">
     <img src="assets/logo.svg" height=200>
-    <h1>Dawn</h1>
+    <h1>Dawn Energy-Efficient Cryptocurrency By "Proof of Weather"</h1>
 </div>
 
-Dawn is a decentralized currency that relies on the randomness of the weather and cryptographic proofs as its foundation.
+Dawn is a cryptocurrency that relies on the randomness of the weather and cryptographic proofs as its foundation.
 
 [![License](https://img.shields.io/badge/license-MIT-blue?style=flat)](LICENSE)
 ![Rust](https://img.shields.io/badge/Rust-000000?logo=rust&logoColor=white)
