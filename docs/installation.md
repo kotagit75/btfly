@@ -23,4 +23,4 @@ exit 0
 ```
 Even without using an API, it is possible to conduct observations by placing sensors on-site, for example.
 
-[Learn more examples](docs/temperature_script_example.md)
+[Learn more examples](./temperature_script_example.md)
