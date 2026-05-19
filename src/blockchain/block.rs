@@ -18,6 +18,8 @@ use crate::{
     },
 };
 
+const MAX_TRANSACTIONS_PER_BLOCK: usize = 100;
+
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 pub struct Block {
     pub index: u64,
@@ -116,6 +118,9 @@ impl Block {
     }
 
     pub fn is_valid(&self, unspent_transactions: &[UnspentTransaction]) -> bool {
+        if self.transactions.len() > MAX_TRANSACTIONS_PER_BLOCK {
+            return false;
+        }
         if let Some((coinbase, normal)) = self.transactions.split_first() {
             self.verify_signature()
                 && self.verify_vdf_solution()
