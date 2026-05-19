@@ -394,4 +394,34 @@ mod tests {
         }
         assert_eq!(next.transactions[0].fee, 2);
     }
+
+    #[test]
+    fn mine_block_limits_transactions_to_max() {
+        let mut state = funded_state();
+        let txs: Vec<Transaction> = (0..(MAX_TRANSACTIONS_PER_BLOCK + 5))
+            .map(|i| Transaction {
+                sender: state.address.clone(),
+                out: Vec::new(),
+                tx_in: Vec::new(),
+                fee: i as u64,
+                signature: Vec::new(),
+            })
+            .collect();
+        state.transactions = txs;
+
+        let (next, effect) = update(Event::MineBlock, state);
+
+        assert!(next.transactions.is_empty());
+        match effect {
+            Effect::MineBlock(mined) => {
+                assert_eq!(mined.len(), MAX_TRANSACTIONS_PER_BLOCK);
+                assert_eq!(mined.first().unwrap().fee, 0);
+                assert_eq!(
+                    mined.last().unwrap().fee,
+                    (MAX_TRANSACTIONS_PER_BLOCK - 1) as u64
+                );
+            }
+            _ => panic!("expected MineBlock effect"),
+        }
+    }
 }

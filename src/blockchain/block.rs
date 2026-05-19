@@ -300,4 +300,24 @@ mod tests {
 
         assert!(next.iter().any(|u| u.address == miner && u.amount == 2));
     }
+
+    #[test]
+    fn is_invalid_when_too_many_transactions() {
+        let (miner, _) = keypair();
+        let transactions = vec![coinbase_transaction(&miner, 1); MAX_TRANSACTIONS_PER_BLOCK + 1];
+
+        let block = Block {
+            index: 1,
+            timestamp: 1,
+            transactions,
+            beacon: Beacon { values: vec![] },
+            vdf_solution: vec![],
+            previous_hash: [0; 32],
+            issuer: miner,
+            signature: vec![],
+            hash: [1; 32],
+        };
+
+        assert!(!block.is_valid(&[]));
+    }
 }
