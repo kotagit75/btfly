@@ -42,6 +42,9 @@ fn get_temperature(lon: f64, lat: f64) -> Option<f32> {
 
 fn choose_locations(latest_block_hash: &Hashed) -> Vec<geojson::Position> {
     let len = TARGET_LOCATIONS.len();
+    if len == 0 {
+        return Vec::new();
+    }
     latest_block_hash
         .iter()
         .map(|i| (*i as usize) % len)
