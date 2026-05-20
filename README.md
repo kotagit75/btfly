@@ -56,6 +56,10 @@ curl -X POST -H "Content-Type: application/json" -d '{"recipient":"[address]", "
 curl -X POST -H "Content-Type: application/json" -d "{'ip':'[IP Addr]'}" localhost:8080/peer
 ```
 
+## :books: Documents
+- [docs/installation.md](docs/installation.md)
+- [docs/temperature_script_example.md](docs/temperature_script_example.md)
+
 ## :globe_with_meridians: Environment variables
 | Name | Description | Default |
 | :--- | :--- | :--- |
