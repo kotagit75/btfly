@@ -1,4 +1,4 @@
-use std::vec;
+use std::{time, vec};
 
 use crate::{
     beacon::get_beacon,
@@ -178,6 +178,7 @@ pub async fn run_effect(state: State, effect: Effect) -> Vec<Event> {
                 info!("failed to get beacon");
                 return vec![Event::MineBlock];
             };
+            let now = time::Instant::now();
             let Ok(block) = state.chain.generate_next_block(
                 &state.secret_key,
                 &state.address,
@@ -186,7 +187,7 @@ pub async fn run_effect(state: State, effect: Effect) -> Vec<Event> {
             ) else {
                 return vec![Event::MineBlock];
             };
-            info!("completed mining block");
+            info!("completed mining block: {}ms", now.elapsed().as_millis());
             return vec![Event::CompletedMineBlock(block), Event::MineBlock];
         }
         Effect::BroadcastResponseBlocks(blocks) => {
