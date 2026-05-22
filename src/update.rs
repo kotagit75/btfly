@@ -205,23 +205,16 @@ pub async fn run_effect(state: State, effect: Effect) -> Vec<Event> {
             return vec![Event::CompletedMineBlock(block), Event::MineBlock];
         }
         Effect::BroadcastResponseBlocks(blocks) => {
-            broadcast(&state.peers, &P2PMessage::ResponseBlockChain(blocks)).await;
+            broadcast(&state.peers, &P2PMessage::ResponseBlockChain(blocks));
         }
-        Effect::BroadcastQueryAll => {
-            broadcast(&state.peers, &P2PMessage::QueryAll).await;
-        }
-        Effect::BroadcastResponseTransactions(transactions) => {
-            broadcast(
-                &state.peers,
-                &P2PMessage::ResponseTransactions(transactions),
-            )
-            .await;
-        }
-        Effect::BroadcastQueryPeers => {
-            broadcast(&state.peers, &P2PMessage::QueryPeers).await;
-        }
+        Effect::BroadcastQueryAll => broadcast(&state.peers, &P2PMessage::QueryAll),
+        Effect::BroadcastResponseTransactions(transactions) => broadcast(
+            &state.peers,
+            &P2PMessage::ResponseTransactions(transactions),
+        ),
+        Effect::BroadcastQueryPeers => broadcast(&state.peers, &P2PMessage::QueryPeers),
         Effect::BroadcastResponsePeers(peers) => {
-            broadcast(&state.peers, &P2PMessage::ResponsePeers(peers)).await;
+            broadcast(&state.peers, &P2PMessage::ResponsePeers(peers))
         }
     }
     Vec::new()
