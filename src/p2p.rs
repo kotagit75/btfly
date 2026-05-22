@@ -89,8 +89,12 @@ impl Peer {
     }
 }
 
-pub async fn broadcast(peers: &[Peer], message: &P2PMessage) {
+pub fn broadcast(peers: &[Peer], message: &P2PMessage) {
     for peer in peers {
-        peer.write(message).await;
+        let peer_clone = peer.clone();
+        let message_clone = message.clone();
+        tokio::spawn(async move {
+            peer_clone.write(&message_clone).await;
+        });
     }
 }
