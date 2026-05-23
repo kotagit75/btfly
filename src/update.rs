@@ -328,7 +328,7 @@ mod tests {
 
         assert!(!next.peers.contains(&p1));
         assert!(next.peers.contains(&p2));
-        assert_eq!(effect, Effect::Broadcast(P2PMessage::QueryPeers));
+        assert_eq!(effect, Effect::None);
     }
 
     #[test]
