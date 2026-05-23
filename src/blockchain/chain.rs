@@ -205,6 +205,7 @@ pub fn is_valid_new_block(
         && block.previous_hash == previous_block.hash
         && block.calculate_hash() == block.hash
         && block.is_valid(unspent_transactions)
+        && is_valid_beacon(&block.beacon, &previous_block.hash, block.timestamp)
 }
 
 #[cfg(test)]
