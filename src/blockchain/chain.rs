@@ -15,7 +15,7 @@ use crate::{
 };
 
 // For blocks older than this number, temperature verification is omitted.
-const CHECKPOINT_DEPTH: usize = 32;
+const CHECKPOINT_DEPTH: usize = 600;
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 pub struct Chain {
