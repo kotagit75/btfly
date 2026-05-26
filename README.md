@@ -38,10 +38,10 @@ chmod +x commands/run.sh
 ### Usage
 ```bash
 # run
-./target/release/dawn
+cargo run --release
 
 # run and mine blocks
-./target/release/dawn --mining
+cargo run --release -- --mining
 
 # get balance
 curl localhost:8080/balance
