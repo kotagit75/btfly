@@ -25,7 +25,12 @@ pub async fn init_p2p(event_tx: mpsc::Sender<Event>) {
     );
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
     info!("P2P server is running on http://{}/", addr);
-    axum::serve(listener, app).await.unwrap();
+    axum::serve(
+        listener,
+        app.into_make_service_with_connect_info::<SocketAddr>(),
+    )
+    .await
+    .unwrap();
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
