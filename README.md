@@ -33,6 +33,14 @@ chmod +x example/open-meteo commands/run.sh
 
 [Detailed Installation Instructions](docs/installation.md)
 
+### Run in Docker
+```bash
+git clone https://github.com/kotagit75/Dawn.git
+cd Dawn
+docker build ./ -t dawn
+docker run -p 8080:8080 -p 62697:62697 -p 8000:8000 --network=host dawn:latest
+```
+
 ### Usage
 ```bash
 # run
