@@ -49,6 +49,9 @@ cargo run --release
 # run and mine blocks
 cargo run --release -- --mining
 
+# run and set peer
+cargo run --release -- --peer [IP Addr]
+
 # get balance
 curl localhost:8080/balance
 curl localhost:8080/balance/[address]
