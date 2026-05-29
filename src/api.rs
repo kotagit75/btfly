@@ -73,7 +73,7 @@ pub async fn init_api(event_tx: mpsc::Sender<Command>, state_rx: watch::Receiver
         .with_state((event_tx, state_rx))
         .layer(cors);
     let addr = SocketAddr::new(
-        std::net::IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)),
+        std::net::IpAddr::V4(Ipv4Addr::new(0, 0, 0, 0)),
         CONFIG.api_port,
     );
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
