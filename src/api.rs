@@ -82,9 +82,7 @@ pub async fn init_api(event_tx: mpsc::Sender<Command>, state_rx: watch::Receiver
     axum::serve(listener, app).await.unwrap();
 }
 
-async fn handle_query_address(
-    extract::State((_, state_rx)): extract::State<AppState>,
-) -> String {
+async fn handle_query_address(extract::State((_, state_rx)): extract::State<AppState>) -> String {
     read_state(&state_rx, |state| state.address.der.clone())
 }
 
@@ -104,7 +102,9 @@ async fn handle_query_balance_with_address(
     extract::State((_, state_rx)): extract::State<AppState>,
     Path(address): Path<String>,
 ) -> response::Json<u64> {
-    json_query(&state_rx, |state| state.chain.get_balance(&Address { der: address }))
+    json_query(&state_rx, |state| {
+        state.chain.get_balance(&Address { der: address })
+    })
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize)]
