@@ -175,6 +175,9 @@ pub async fn update(event: Event, state: State, beacon_cache: &dyn BeaconCache) 
                         true,
                         beacon_cache,
                     );
+                    if changed {
+                        info!("added block: {:?}", received_latest_block);
+                    }
                     return (
                         State {
                             chain: new_chain,
@@ -194,6 +197,7 @@ pub async fn update(event: Event, state: State, beacon_cache: &dyn BeaconCache) 
                     return (state, Effect::Broadcast(P2PMessage::QueryAll));
                 } else {
                     prefetch_chain_beacons(beacon_cache, &blocks).await;
+                    info!("replacing chain with {} blocks", blocks.len());
                     return (
                         State {
                             chain: state.chain.replace(Chain { blocks }, beacon_cache),
