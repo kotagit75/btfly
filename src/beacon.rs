@@ -122,12 +122,12 @@ pub async fn get_beacon(latest_block_hash: &Hashed, timestamp: i64) -> Option<Be
         if let Some(temp) = get_temperature(pos[0], pos[1], timestamp).await {
             temperatures.push(temp);
         } else {
-            info!("failed to get temperature for location {}", i);
+            error!("failed to get temperature for location {}", i);
             return None;
         }
     }
     if temperatures.len() != locations.len() {
-        info!("failed to get beacon");
+        error!("failed to get beacon");
         return None;
     }
     info!("completed getting beacon");

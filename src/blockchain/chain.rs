@@ -52,6 +52,7 @@ impl Chain {
             .chain(&transactions_without_coinbase)
             .cloned()
             .collect::<Vec<Transaction>>();
+        info!("start calculating vdf solution");
         let vdf_solution = solve_block_vdf(&BlockData::new(
             next_index,
             next_timestamp,
@@ -61,6 +62,7 @@ impl Chain {
             previous_block.hash.clone(),
         ))
         .unwrap();
+        info!("completed calculating vdf solution");
         Block::new_with_creating_signature(
             next_index,
             next_timestamp,

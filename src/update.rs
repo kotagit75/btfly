@@ -262,7 +262,7 @@ pub async fn run_effect(state: State, effect: Effect) -> Vec<Event> {
             let Some(beacon) =
                 get_beacon(&state.chain.get_latest_block().hash, next_timestamp).await
             else {
-                info!("failed to get beacon");
+                error!("failed to get beacon");
                 return vec![Event::MineBlock];
             };
             let now = time::Instant::now();
