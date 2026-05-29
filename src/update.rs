@@ -134,7 +134,6 @@ pub async fn update(event: Event, state: State, beacon_cache: &dyn BeaconCache) 
                     .chain
                     .add_block(new_block.clone(), true, true, beacon_cache);
             let new_state = State { chain, ..state };
-            println!("Event::CompletedMineBlock: changed={changed}");
             return (new_state, {
                 if changed {
                     Effect::Broadcast(P2PMessage::ResponseBlockChain(vec![new_block]))
