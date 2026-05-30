@@ -25,6 +25,7 @@ Weather is a source of information where, regardless of who observes it, relativ
 Here, data that is difficult to predict is referred to as a "beacon." Dawn uses a hash chain composed of linked blocks. In addition to transactions, each block contains the beacon and the results of VDF calculations. Because the value of the beacon is difficult to predict, it is challenging to generate future blocks. Furthermore, the hash chain is employed to prevent the generation of blocks using past beacon values.
 ## :rocket: Quick Start
 ```bash
+sudo apt -y install openssl
 git clone https://github.com/kotagit75/Dawn.git
 cd Dawn
 chmod +x example/open-meteo.py commands/run.sh
