@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 
 case "$1" in
+health)
+    curl -X GET localhost:8080/health
+    ;;
 getbalance)
     curl -X GET localhost:8080/balance
     ;;
