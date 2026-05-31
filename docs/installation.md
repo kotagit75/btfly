@@ -8,6 +8,9 @@ git clone https://github.com/kotagit75/Dawn.git
 
 # Navigate to the project directory
 cd Dawn
+
+# Make the dawn-cli.sh script executable
+chmod +x commands/dawn-cli.sh
 ```
 
 ### Create a script to retrieve the temperature

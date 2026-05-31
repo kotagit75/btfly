@@ -28,7 +28,7 @@ Here, data that is difficult to predict is referred to as a "beacon." Dawn uses 
 sudo apt -y install openssl
 git clone https://github.com/kotagit75/Dawn.git
 cd Dawn
-chmod +x example/open-meteo.py commands/run.sh
+chmod +x example/open-meteo.py commands/run.sh commands/dawn-cli.sh
 ./commands/run.sh example/open-meteo.py
 ```
 
@@ -54,17 +54,17 @@ cargo run --release -- --mining
 cargo run --release -- --peer [IP Addr]
 
 # get balance
-curl localhost:8080/balance
-curl localhost:8080/balance/[address]
+./commands/dawn-cli.sh getbalance
+./commands/dawn-cli.sh getbalancebyaddress [address]
 
 # get chain
-curl localhost:8080/chain
+./commands/dawn-cli.sh getchain
 
 # send transaction
-curl -X POST -H "Content-Type: application/json" -d '{"recipient":"[address]", "send_amount": [amount], "fee": [fee]}' localhost:8080/tx
+./commands/dawn-cli.sh sendtransaction [address] [amount] [fee]
 
 # add peer
-curl -X POST -H "Content-Type: application/json" -d "{'ip':'[IP Addr]'}" localhost:8080/peer
+./commands/dawn-cli.sh addpeer [IP Addr]
 ```
 
 > [!CAUTION]
