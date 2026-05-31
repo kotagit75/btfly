@@ -53,6 +53,9 @@ cargo run --release -- --mining
 # run and set peer
 cargo run --release -- --peer [IP Addr]
 
+# check health
+./commands/dawn-cli.sh health
+
 # get balance
 ./commands/dawn-cli.sh getbalance
 ./commands/dawn-cli.sh getbalancebyaddress [address]
