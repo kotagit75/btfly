@@ -32,5 +32,5 @@ cargo run --release -- --mining
 You can run these two commands together using the following command:
 ```bash
 chmod +x ./commands/run.sh
-./commands/run.sh
+./commands/run.sh example/open-meteo.py
 ```
