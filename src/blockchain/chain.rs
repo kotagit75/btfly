@@ -98,6 +98,12 @@ impl Chain {
             .count()
     }
 
+    fn add_block_without_validation(&self, block: Block) -> Self {
+        Self {
+            blocks: self.blocks.iter().chain([&block]).cloned().collect(),
+        }
+    }
+
     pub fn add_block(
         &self,
         block: Block,
@@ -106,29 +112,24 @@ impl Chain {
         cache: &dyn BeaconCache,
     ) -> (Self, bool) {
         let previous_block = self.get_latest_block();
-        if !i_generated && generated_now {
-            let Some(beacon) = cache.get(&BeaconKey::new(&previous_block.hash, block.timestamp))
-            else {
-                return (self.clone(), false);
-            };
-            if !is_valid_beacon(&beacon, &block.beacon) {
-                return (self.clone(), false);
+        let beacon_ok = if !i_generated && generated_now {
+            match cache.get(&BeaconKey::new(&previous_block.hash, block.timestamp)) {
+                Some(beacon) => is_valid_beacon(&beacon, &block.beacon),
+                None => false,
             }
-        }
-
-        if is_valid_new_block(
+        } else {
+            true
+        };
+        let is_valid_new_block = is_valid_new_block(
             &block,
             &previous_block,
             &self.get_unspent_transactions().0,
             self.get_block_depth(&block),
             cache,
-        ) {
-            (
-                Self {
-                    blocks: self.blocks.iter().chain([&block]).cloned().collect(),
-                },
-                true,
-            )
+        );
+
+        if is_valid_new_block && beacon_ok {
+            (self.add_block_without_validation(block), true)
         } else {
             (self.clone(), false)
         }
