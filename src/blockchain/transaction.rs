@@ -282,25 +282,26 @@ pub fn flex_unspent_transactions(
     target_amount: u64,
     unspent_transactions: Vec<UnspentTransaction>,
 ) -> Vec<UnspentTransaction> {
-    unspent_transactions
-        .iter()
-        .fold(
-            (0, Vec::new()),
-            |(amount, use_unspent), unspent_transaction| {
-                if amount >= target_amount {
-                    return (amount, use_unspent);
-                }
-                (
-                    amount + unspent_transaction.amount,
-                    use_unspent
-                        .iter()
-                        .chain([unspent_transaction])
-                        .cloned()
-                        .collect(),
-                )
-            },
-        )
-        .1
+    let (amount, unspent) = unspent_transactions.iter().fold(
+        (0, Vec::new()),
+        |(amount, use_unspent), unspent_transaction| {
+            if amount >= target_amount {
+                return (amount, use_unspent);
+            }
+            (
+                amount + unspent_transaction.amount,
+                use_unspent
+                    .iter()
+                    .chain([unspent_transaction])
+                    .cloned()
+                    .collect(),
+            )
+        },
+    );
+    if amount < target_amount {
+        return Vec::new();
+    }
+    unspent
 }
 
 #[cfg(test)]
@@ -500,7 +501,7 @@ mod tests {
         );
 
         let selected_insufficient = flex_unspent_transactions(100, utxos);
-        assert_eq!(selected_insufficient.len(), 3);
+        assert_eq!(selected_insufficient.len(), 0);
     }
 
     #[test]

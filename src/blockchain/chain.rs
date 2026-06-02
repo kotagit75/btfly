@@ -134,12 +134,7 @@ impl Chain {
         ) {
             (
                 Self {
-                    blocks: self
-                        .blocks
-                        .iter()
-                        .chain(std::iter::once(&block))
-                        .cloned()
-                        .collect(),
+                    blocks: self.blocks.iter().chain([&block]).cloned().collect(),
                 },
                 true,
             )
@@ -162,6 +157,18 @@ impl Chain {
             .cloned()
     }
 
+    pub fn filter_unspent_transactions_by_address(
+        &self,
+        address: &Address,
+    ) -> Vec<UnspentTransaction> {
+        self.get_unspent_transactions()
+            .0
+            .iter()
+            .filter(|unspent| unspent.address == *address)
+            .cloned()
+            .collect()
+    }
+
     pub fn generate_transaction(
         &self,
         sender: &Address,
@@ -173,27 +180,18 @@ impl Chain {
     ) -> Result<Option<Transaction>, ErrorStack> {
         let amount = send_amount + fee;
 
-        if self.get_balance(sender) < amount {
-            return Ok(None);
-        }
-
-        let (mut unspent_transactions, _) = self.get_unspent_transactions();
-
+        let mut filtered_unspent_transactions = self.filter_unspent_transactions_by_address(sender);
         let used_unspent_ids: Vec<u64> = used_transactions
             .iter()
-            .flat_map(|tx| tx.tx_in.iter().map(|i| i.unspent_id))
+            .flat_map(|tx| &tx.tx_in)
+            .map(|i| i.unspent_id)
             .collect();
-
-        unspent_transactions.retain(|tx| !used_unspent_ids.iter().any(|t| *t == tx.id));
-        let sender_unspent_transactions: Vec<UnspentTransaction> = unspent_transactions
-            .iter()
-            .filter(|tx| &tx.address == sender)
-            .cloned()
-            .collect();
-        let use_unspent = flex_unspent_transactions(amount, sender_unspent_transactions);
+        filtered_unspent_transactions.retain(|tx| !used_unspent_ids.contains(&tx.id));
+        let use_unspent = flex_unspent_transactions(amount, filtered_unspent_transactions);
         if use_unspent.is_empty() {
             return Ok(None);
         }
+
         let transaction = Transaction::new_with_creating_signature(
             sender,
             get_transaction_out(
