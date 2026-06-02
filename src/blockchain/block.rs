@@ -37,7 +37,7 @@ impl Block {
     pub fn new(
         index: u64,
         timestamp: i64,
-        transactions: Vec<Transaction>,
+        transactions: &[Transaction],
         beacon: Beacon,
         vdf_solution: Vec<u8>,
         issuer: &Address,
@@ -48,7 +48,7 @@ impl Block {
             &BlockData::new(
                 index,
                 timestamp,
-                &transactions,
+                transactions,
                 &beacon,
                 &issuer,
                 previous_hash.clone(),
@@ -59,7 +59,7 @@ impl Block {
         Self {
             index,
             timestamp,
-            transactions,
+            transactions: transactions.to_vec(),
             beacon,
             vdf_solution,
             previous_hash,
@@ -69,35 +69,20 @@ impl Block {
         }
     }
     pub fn new_with_creating_signature(
-        index: u64,
-        timestamp: i64,
-        transactions: Vec<Transaction>,
-        beacon: Beacon,
+        blockdata: &BlockData,
         vdf_solution: Vec<u8>,
-        issuer: &Address,
         previous_hash: Hashed,
         sk: &SK,
     ) -> Result<Self, ErrorStack> {
         Ok(Self::new(
-            index,
-            timestamp,
-            transactions.clone(),
-            beacon.clone(),
+            blockdata.index,
+            blockdata.timestamp,
+            blockdata.transactions,
+            blockdata.beacon.clone(),
             vdf_solution.clone(),
-            issuer,
+            blockdata.issuer,
             previous_hash,
-            create_block_signature(
-                &BlockData::new(
-                    index,
-                    timestamp,
-                    &transactions,
-                    &beacon,
-                    &issuer,
-                    previous_hash.clone(),
-                ),
-                &vdf_solution,
-                sk,
-            )?,
+            create_block_signature(blockdata, &vdf_solution, sk)?,
         ))
     }
     pub fn verify_signature(&self) -> bool {
@@ -231,7 +216,7 @@ pub fn genesis_block() -> Block {
     Block::new(
         0,
         0,
-        Vec::new(),
+        &[],
         Beacon { values: Vec::new() },
         Vec::new(),
         &pk,

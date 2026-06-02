@@ -42,37 +42,28 @@ impl Chain {
         issuer: &Address,
         beacon: Beacon,
         transactions_without_coinbase: Vec<Transaction>,
-        timestamp: i64,
+        next_timestamp: i64,
     ) -> Result<Block, ErrorStack> {
         let previous_block: Block = self.get_latest_block();
         let next_index: u64 = previous_block.index + 1;
-        let next_timestamp = timestamp;
-        let transactions = [coinbase_transaction(issuer, next_index)]
+        let transactions = transactions_without_coinbase
             .iter()
-            .chain(&transactions_without_coinbase)
+            .chain([&coinbase_transaction(issuer, next_index)])
             .cloned()
             .collect::<Vec<Transaction>>();
-        info!("start calculating vdf solution");
-        let vdf_solution = solve_block_vdf(&BlockData::new(
+        let block_data = BlockData::new(
             next_index,
             next_timestamp,
             &transactions,
             &beacon,
             &issuer,
             previous_block.hash.clone(),
-        ))
-        .unwrap();
+        );
+
+        info!("start calculating vdf solution");
+        let vdf_solution = solve_block_vdf(&block_data).unwrap();
         info!("completed calculating vdf solution");
-        Block::new_with_creating_signature(
-            next_index,
-            next_timestamp,
-            transactions,
-            beacon,
-            vdf_solution,
-            issuer,
-            previous_block.hash,
-            sk,
-        )
+        Block::new_with_creating_signature(&block_data, vdf_solution, previous_block.hash, sk)
     }
 
     pub fn is_valid(&self, cache: &dyn BeaconCache) -> bool {
