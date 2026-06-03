@@ -4,7 +4,7 @@
     <h2>Energy-Efficient Cryptocurrency By "Proof of Weather"</h2>
 </div>
 
-Dawn is a cryptocurrency that relies on the randomness of the weather and cryptographic proofs as its foundation.
+Dawn is a cryptocurrency that relies on the randomness of the weather and cryptographic proofs as its foundation. This cryptocurrency aims to address the issue of excessive energy consumption associated with Proof of Work and employs a proprietary consensus algorithm.
 
 [![License](https://img.shields.io/badge/license-MIT-blue?style=flat)](LICENSE)
 ![Rust](https://img.shields.io/badge/Rust-000000?logo=rust&logoColor=white)
@@ -15,15 +15,68 @@ A Japanese article explaining Dawn can be found [here](https://zenn.dev/yuzu_mik
 > [!NOTE]
 > Dawn is currently a project in the technical validation phase and in active development. The API and features may change without notice.
 
-## :sparkles: Features
-- ⛅ Consensus by Weather - Weather data enables rapid consensus building
-- ⚡ Highly energy-efficient - Because VDF is used instead of Proof of Work, it is more energy-efficient
+## 🌟 Features
+- ⛅ Proof of Weather consensus
+- ⚡ Energy-efficient block production using VDFs
+- 🌍 Real-world entropy source from weather observations
+- 🔗 Hash-chain protection against replaying historical weather data
+- 📡 Peer-to-peer blockchain network
+- 🦀 Implemented in Rust
 
-## :dart: How does it work?
-Weather is a source of information where, regardless of who observes it, relatively consistent readings are obtained at the same time; however, it is impossible to predict its changes with absolute accuracy. By incorporating this characteristic of weather into the consensus mechanism of a decentralized system, we can create a currency that does not require proof-of-work.
+## 🌤 Why Weather?
+Traditional Proof-of-Work systems consume large amounts of electricity to create a source of unpredictability that secures consensus.
 
-Here, data that is difficult to predict is referred to as a "beacon." Dawn uses a hash chain composed of linked blocks. In addition to transactions, each block contains the beacon and the results of VDF calculations. Because the value of the beacon is difficult to predict, it is challenging to generate future blocks. Furthermore, the hash chain is employed to prevent the generation of blocks using past beacon values.
-## :rocket: Quick Start
+Dawn takes a different approach.
+
+Instead of spending energy on computational puzzles, Dawn derives unpredictability from real-world weather observations. Future weather conditions cannot be predicted perfectly, making weather data a naturally occurring source of entropy.
+
+This allows Dawn to build consensus without requiring energy-intensive mining.
+
+## 🎯 How does it work?
+
+A weather observation is used as a beacon.
+
+A beacon is an externally observed value that is difficult to predict before it becomes publicly available.
+
+In Dawn, weather measurements collected from multiple locations serve as the beacon.
+
+The consensus process can be summarized as follows:
+
+```mermaid
+flowchart TD
+    A[Weather Data] --> B[Beacon]
+    B --> C[VDF]
+    C --> D[Block Generation]
+    D --> E[Blockchain]
+```
+
+1. Weather observations are collected.
+2. The observations are transformed into a beacon value.
+3. A Verifiable Delay Function (VDF) is evaluated using the beacon.
+4. The VDF output is included in a new block.
+5. The block is appended to the hash chain.
+6. Future blocks depend on previous blocks, preventing reuse of historical weather data.
+
+Because future weather conditions are difficult to predict, generating future blocks ahead of time becomes difficult.
+
+The hash chain further prevents attackers from generating alternative histories using previously observed weather values.
+
+## 🔒 Security Considerations
+
+Dawn is an experimental consensus mechanism and its security properties are still being evaluated.
+
+The current design assumes:
+
+- Weather observations are collected from multiple geographically distributed locations.
+- No single observation point can fully determine the beacon.
+- Future weather observations cannot be predicted with perfect accuracy.
+- Historical weather observations cannot be reused because each block depends on the previous block hash.
+
+The security of Proof of Weather relies primarily on the unpredictability of future observations and the cryptographic guarantees provided by VDFs and hash chaining.
+
+This project should currently be considered experimental and not production-ready.
+
+## 🚀 Quick Start
 ```bash
 sudo apt -y install openssl
 git clone https://github.com/kotagit75/Dawn.git
@@ -73,11 +126,11 @@ cargo run --release -- --peer [IP Addr]
 > [!CAUTION]
 > No Guarantee of Monetary Value The "Dawn" project is currently in its development. Any tokens (UTXOs) generated or utilized within this network are intended solely for the technical verification of the unique "Proof of Weather" consensus and overall system stability. They do not represent, nor do they guarantee, any real-world monetary value, convertibility to legal tender, or purchasing power.
 
-## :books: Documents
+## 📚 Documents
 - [docs/installation.md](docs/installation.md)
 - [docs/temperature_script_example.md](docs/temperature_script_example.md)
 
-## :globe_with_meridians: Environment variables
+## 🌐 Environment variables
 | Name | Description | Default |
 | :--- | :--- | :--- |
 | `API_PORT` | API server port number | `8080` |
