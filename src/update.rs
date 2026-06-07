@@ -133,7 +133,7 @@ pub async fn update(event: Event, state: State, beacon_cache: &dyn BeaconCache) 
                 state
                     .chain
                     .add_block(new_block.clone(), true, true, beacon_cache);
-            let new_state = State { chain, ..state };
+            let state = State { chain, ..state };
 
             if changed {
                 info!("completed to add next block");
@@ -141,7 +141,7 @@ pub async fn update(event: Event, state: State, beacon_cache: &dyn BeaconCache) 
                 error!("failed to add next block");
             }
 
-            return (new_state, {
+            return (state, {
                 if changed {
                     Effect::Broadcast(P2PMessage::ResponseBlockChain(vec![new_block]))
                 } else {
