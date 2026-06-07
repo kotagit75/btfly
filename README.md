@@ -130,11 +130,6 @@ cargo run --release -- --peer [IP Addr]
 - [docs/installation.md](docs/installation.md)
 - [docs/temperature_script_example.md](docs/temperature_script_example.md)
 
-## 🌐 Environment variables
-| Name | Description | Default |
-| :--- | :--- | :--- |
-| `API_PORT` | API server port number | `8080` |
-| `CORS_ALLOW_PORT` | CORS allow port number | `3000` |
 ## 📍 Locations which is collected temperature data
 Dawn gets temperature data from multiple locations. They are currently placed in Japan. The locations are as follows:
 
