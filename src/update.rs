@@ -55,18 +55,22 @@ async fn prefetch_chain_beacons(cache: &dyn BeaconCache, blocks: &[Block]) {
     let _ = join_all(tasks).await;
 }
 
+fn map_effect(effect: impl FnOnce() -> Effect, changed: bool) -> Effect {
+    if changed { effect() } else { Effect::None }
+}
+
 pub async fn update(event: Event, state: State, beacon_cache: &dyn BeaconCache) -> (State, Effect) {
     match event {
         Event::AddPeer(peer) => {
-            info!("added peer: {}", peer.ip);
             let (state, changed) = state.add_peer(&peer);
+            if changed {
+                info!("added peer: {}", peer.ip);
+            } else {
+                error!("peer already exists: {}", peer.ip);
+            }
             return (
                 state,
-                if changed {
-                    Effect::Broadcast(P2PMessage::QueryPeers)
-                } else {
-                    Effect::None
-                },
+                map_effect(|| Effect::Broadcast(P2PMessage::QueryPeers), changed),
             );
         }
         Event::RemovePeers(peers) => {
@@ -92,16 +96,16 @@ pub async fn update(event: Event, state: State, beacon_cache: &dyn BeaconCache) 
                 let (state, changed) = state.add_transaction(&transaction);
                 if changed {
                     info!("added transaction: {:?}", transaction);
+                } else {
+                    error!("failed to add transaction: {:?}", transaction);
                 }
-                return (state, {
-                    if changed {
-                        Effect::Broadcast(P2PMessage::ResponseTransactions(vec![
-                            transaction.clone(),
-                        ]))
-                    } else {
-                        Effect::None
-                    }
-                });
+                return (
+                    state,
+                    map_effect(
+                        || Effect::Broadcast(P2PMessage::ResponseTransactions(vec![transaction])),
+                        changed,
+                    ),
+                );
             }
         }
         Event::MineBlock => {
@@ -141,13 +145,13 @@ pub async fn update(event: Event, state: State, beacon_cache: &dyn BeaconCache) 
                 error!("failed to add next block");
             }
 
-            return (state, {
-                if changed {
-                    Effect::Broadcast(P2PMessage::ResponseBlockChain(vec![new_block]))
-                } else {
-                    Effect::None
-                }
-            });
+            return (
+                state,
+                map_effect(
+                    || Effect::Broadcast(P2PMessage::ResponseBlockChain(vec![new_block])),
+                    changed,
+                ),
+            );
         }
         Event::P2PMessage(_, P2PMessage::QueryAll) => {
             let chain = state.chain.blocks.clone();
@@ -190,15 +194,14 @@ pub async fn update(event: Event, state: State, beacon_cache: &dyn BeaconCache) 
                             chain: new_chain,
                             ..state
                         },
-                        {
-                            if changed {
+                        map_effect(
+                            || {
                                 Effect::Broadcast(P2PMessage::ResponseBlockChain(vec![
                                     received_latest_block.clone(),
                                 ]))
-                            } else {
-                                Effect::None
-                            }
-                        },
+                            },
+                            changed,
+                        ),
                     );
                 } else if blocks.len() == 1 {
                     return (state, Effect::Broadcast(P2PMessage::QueryAll));
@@ -229,13 +232,13 @@ pub async fn update(event: Event, state: State, beacon_cache: &dyn BeaconCache) 
                         let (state, changed_) = state.add_transaction(transaction);
                         (state, changed || changed_)
                     });
-            return (state.clone(), {
-                if changed {
-                    Effect::Broadcast(P2PMessage::ResponseTransactions(state.transactions.clone()))
-                } else {
-                    Effect::None
-                }
-            });
+            return (
+                state.clone(),
+                map_effect(
+                    || Effect::Broadcast(P2PMessage::ResponseTransactions(state.transactions)),
+                    changed,
+                ),
+            );
         }
         Event::P2PMessage(peer_option, P2PMessage::QueryPeers) => {
             return (
@@ -248,13 +251,13 @@ pub async fn update(event: Event, state: State, beacon_cache: &dyn BeaconCache) 
         }
         Event::P2PMessage(_, P2PMessage::ResponsePeers(peers)) => {
             let (state, changed) = state.add_peers(&peers);
-            return (state.clone(), {
-                if changed {
-                    Effect::Broadcast(P2PMessage::ResponsePeers(state.peers.clone()))
-                } else {
-                    Effect::None
-                }
-            });
+            return (
+                state.clone(),
+                map_effect(
+                    || Effect::Broadcast(P2PMessage::ResponsePeers(state.peers)),
+                    changed,
+                ),
+            );
         }
     }
     (state, Effect::None)
