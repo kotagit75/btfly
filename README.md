@@ -1,7 +1,7 @@
 <div align="center">
     <img src="assets/logo.svg" height=200>
     <h1>Dawn</h1>
-    <h2>A Blockchain Secured by Weather</h2>
+    <h2>A Blockchain Secured by Weather Observations</h2>
 </div>
 
 Dawn is an experimental blockchain that explores whether weather observations can be used as a consensus beacon. By combining weather-derived beacons with Verifiable Delay Functions (VDFs), Dawn investigates an alternative approach to blockchain consensus.
