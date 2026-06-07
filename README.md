@@ -4,9 +4,7 @@
     <h2>A Blockchain Secured by Weather</h2>
 </div>
 
-Dawn is an experimental blockchain that explores whether weather observations can be used as a consensus beacon.
-
-By combining weather-derived beacons with Verifiable Delay Functions (VDFs), Dawn investigates an alternative approach to blockchain consensus.
+Dawn is an experimental blockchain that explores whether weather observations can be used as a consensus beacon. By combining weather-derived beacons with Verifiable Delay Functions (VDFs), Dawn investigates an alternative approach to blockchain consensus.
 
 Bitcoin creates unpredictability through computation.
 
