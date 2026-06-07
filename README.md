@@ -1,10 +1,18 @@
 <div align="center">
     <img src="assets/logo.svg" height=200>
     <h1>Dawn</h1>
-    <h2>Energy-Efficient Cryptocurrency By "Proof of Weather"</h2>
+    <h2>A Blockchain Secured by Weather</h2>
 </div>
 
-Dawn is a cryptocurrency that relies on the randomness of the weather and cryptographic proofs as its foundation. This cryptocurrency aims to address the issue of excessive energy consumption associated with Proof of Work and employs a proprietary consensus algorithm.
+Dawn is an experimental blockchain that explores whether weather observations can be used as a consensus beacon.
+
+By combining weather-derived beacons with Verifiable Delay Functions (VDFs), Dawn investigates an alternative approach to blockchain consensus.
+
+Bitcoin creates unpredictability through computation.
+
+Dawn explores whether naturally occurring unpredictability already exists in the real world.
+
+Weather is one candidate.
 
 [![License](https://img.shields.io/badge/license-MIT-blue?style=flat)](LICENSE)
 ![Rust](https://img.shields.io/badge/Rust-000000?logo=rust&logoColor=white)
@@ -20,8 +28,6 @@ A Japanese article explaining Dawn can be found [here](https://zenn.dev/yuzu_mik
 - ⚡ Energy-efficient block production using VDFs
 - 🌍 Real-world entropy source from weather observations
 - 🔗 Hash-chain protection against replaying historical weather data
-- 📡 Peer-to-peer blockchain network
-- 🦀 Implemented in Rust
 
 ## ⛅ Why Weather?
 Traditional Proof-of-Work systems consume large amounts of electricity to create a source of unpredictability that secures consensus.
