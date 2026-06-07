@@ -103,8 +103,8 @@ cargo run --release
 # run and mine blocks
 cargo run --release -- --mining
 
-# run and set peer
-cargo run --release -- --peer [IP Addr]
+# display help
+cargo run --release -- --help
 
 # check health
 ./commands/dawn-cli.sh health
