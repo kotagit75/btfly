@@ -20,6 +20,7 @@ A Japanese article explaining Dawn can be found [here](https://zenn.dev/yuzu_mik
 
 > [!NOTE]
 > Dawn is currently a project in the technical validation phase and in active development. The API and features may change without notice.
+> Star ⭐ this repo if you find this project promising!
 
 ## 🌟 Features
 - ⛅ Proof of Weather consensus
