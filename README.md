@@ -4,11 +4,11 @@
     <h2>A Blockchain Secured by Weather Observations</h2>
 </div>
 
-btfy is an experimental blockchain that explores whether weather observations can be used as a consensus beacon. By combining weather-derived beacons with Verifiable Delay Functions (VDFs), btfy investigates an alternative approach to blockchain consensus.
+Btfy is an experimental blockchain that explores whether weather observations can be used as a consensus beacon. By combining weather-derived beacons with Verifiable Delay Functions (VDFs), btfy investigates an alternative approach to blockchain consensus.
 
 Bitcoin creates unpredictability through computation.
 
-btfy explores whether naturally occurring unpredictability already exists in the real world.
+Btfy explores whether naturally occurring unpredictability already exists in the real world.
 
 Weather is one candidate.
 
@@ -16,10 +16,10 @@ Weather is one candidate.
 ![Rust](https://img.shields.io/badge/Rust-000000?logo=rust&logoColor=white)
 ![GitHub Actions Results](https://github.com/kotagit75/btfy/actions/workflows/test.yaml/badge.svg)
 
-A Japanese article explaining btfy can be found [here](https://zenn.dev/yuzu_mikan/articles/7e5df1520f183a).
+A Japanese article explaining Btfy can be found [here](https://zenn.dev/yuzu_mikan/articles/7e5df1520f183a).
 
 > [!NOTE]
-> btfy is currently a project in the technical validation phase and in active development. The API and features may change without notice.  
+> Btfy is currently a project in the technical validation phase and in active development. The API and features may change without notice.  
 > Star ⭐ this repo if you find this project promising!
 
 ## 🌟 Features
@@ -31,11 +31,11 @@ A Japanese article explaining btfy can be found [here](https://zenn.dev/yuzu_mik
 ## ⛅ Why Weather?
 Traditional Proof-of-Work systems consume large amounts of electricity to create a source of unpredictability that secures consensus.
 
-btfy takes a different approach.
+Btfy takes a different approach.
 
-Instead of spending energy on computational puzzles, btfy derives unpredictability from real-world weather observations. Future weather conditions cannot be predicted perfectly, making weather data a naturally occurring source of entropy.
+Instead of spending energy on computational puzzles, Btfy derives unpredictability from real-world weather observations. Future weather conditions cannot be predicted perfectly, making weather data a naturally occurring source of entropy.
 
-This allows btfy to build consensus without requiring energy-intensive mining.
+This allows Btfy to build consensus without requiring energy-intensive mining.
 
 ## 🎯 How does it work?
 
@@ -43,7 +43,7 @@ A weather observation is used as a beacon.
 
 A beacon is an externally observed value that is difficult to predict before it becomes publicly available.
 
-In btfy, weather measurements collected from multiple locations serve as the beacon.
+In Btfy, weather measurements collected from multiple locations serve as the beacon.
 
 The consensus process can be summarized as follows:
 
@@ -68,7 +68,7 @@ The hash chain further prevents attackers from generating alternative histories 
 
 ## 🔒 Security Considerations
 
-btfy is an experimental consensus mechanism and its security properties are still being evaluated.
+Btfy is an experimental consensus mechanism and its security properties are still being evaluated.
 
 The current design assumes:
 
@@ -129,7 +129,7 @@ cargo run --release -- --help
 ```
 
 > [!CAUTION]
-> No Guarantee of Monetary Value The "btfy" project is currently in its development. Any tokens (UTXOs) generated or utilized within this network are intended solely for the technical verification of the unique "Proof of Weather" consensus and overall system stability. They do not represent, nor do they guarantee, any real-world monetary value, convertibility to legal tender, or purchasing power.
+> No Guarantee of Monetary Value The "Btfy" project is currently in its development. Any tokens (UTXOs) generated or utilized within this network are intended solely for the technical verification of the unique "Proof of Weather" consensus and overall system stability. They do not represent, nor do they guarantee, any real-world monetary value, convertibility to legal tender, or purchasing power.
 
 ## 📚 Documents
 - [docs/installation.md](docs/installation.md)
@@ -137,7 +137,7 @@ cargo run --release -- --help
 - [FAQs](docs/faq.md)
 
 ## 📍 Locations which is collected temperature data
-btfy gets temperature data from multiple locations. They are currently placed in Japan. The locations are as follows:
+Btfy gets temperature data from multiple locations. They are currently placed in Japan. The locations are as follows:
 
 |Name|Latitude|Longitude|
 |:-:|:-:|:-:|
