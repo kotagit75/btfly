@@ -24,6 +24,6 @@ jobs:
       - id: cache
         uses: Swatinem/rust-cache@v2
         with:
-          workspaces: btfly
+          workspaces: btfy
       - run: cargo test --all-features
       - run: cargo fmt --all --check

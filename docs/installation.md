@@ -4,13 +4,13 @@
 sudo apt -y install openssl
 
 # Clone the repository (or Download ZIP)
-git clone https://github.com/kotagit75/btfly.git
+git clone https://github.com/kotagit75/btfy.git
 
 # Navigate to the project directory
-cd btfly
+cd btfy
 
-# Make the btfly-cli.sh script executable
-chmod +x commands/btfly-cli.sh
+# Make the btfy-cli.sh script executable
+chmod +x commands/btfy-cli.sh
 ```
 
 ### Create a script to retrieve the temperature
@@ -25,7 +25,7 @@ First, let’s run the script for retrieving temperature data that we created in
 # Example
 python3 examples/open-meteo.py
 ```
-Next, run btfly.
+Next, run btfy.
 ```bash
 cargo run --release -- --mining
 ```
