@@ -14,7 +14,7 @@ use crate::{
     util::key::SK,
 };
 
-// For blocks older than this number, temperature verification is omitted.
+// For blocks older than CHECKPOINT_DEPTH, temperature verification is omitted.
 pub const CHECKPOINT_DEPTH: usize = 600;
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
